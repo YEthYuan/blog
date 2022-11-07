@@ -369,6 +369,7 @@ giscus:
   category_id: DIC_kwDOG_mEts4CSaaF
   theme:
     dark: dark
+    light: light
   input-position: top
   reactions-enabled: 1
   mapping: pathname
