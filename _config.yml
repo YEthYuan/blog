@@ -146,3 +146,7 @@ live2d:
 # 自动生成sitemap
 sitemap:
   path: sitemap.xml
+
+permalink_pinyin:
+  enable: true
+  separator: '-'   # default: '-'
