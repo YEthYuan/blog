@@ -30,8 +30,8 @@ jobs:
         run: npm install -g hexo
       - name: Clean
         run: hexo clean
-      - name: Build
-        run: hexo build
+      - name: Generate
+        run: hexo generate
       - name: ls
         run: ls
       - name: pwd
