@@ -23,8 +23,10 @@ jobs:
             ${{ runner.OS }}-npm-cache
       - name: Install Dependencies
         run: npm install
+      - name: Clean
+        run: hexo clean
       - name: Build
-        run: npm run build
+        run: hexo build
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
