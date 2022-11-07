@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - master  # default branch
+  pull_request:
+    branches:
+      - master
 
 jobs:
   pages:
@@ -29,8 +32,11 @@ jobs:
         run: hexo clean
       - name: Build
         run: hexo build
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
+      - name: No Jekyll
+        run: touch ./public/.nojekyll
+        
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4.4.1
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
+          branch: gh-pages # The branch the action should deploy to.
+          folder: public # The folder the action should deploy.
