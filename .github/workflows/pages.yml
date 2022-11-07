@@ -32,8 +32,8 @@ jobs:
         run: hexo clean
       - name: Generate
         run: hexo generate
-      - name: No Jekyll
-        run: touch ./public/.nojekyll
+      # - name: No Jekyll
+      #   run: touch ./public/.nojekyll
         
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4.4.1
