@@ -18,7 +18,7 @@ timezone: ''
 url: https://blog.yeyuan.pro/
 root: /
 # permalink: :year/:month/:day/:title/
-permalink: :title.html
+permalink: /posts/:title.html
 permalink_defaults:
 pretty_urls:
   trailing_index: true # Set to false to remove trailing 'index.html' from permalinks
