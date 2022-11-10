@@ -703,7 +703,7 @@ aside:
       link: https://github.com/YEthYuan
   card_announcement:
     enable: true
-    content: I'm actively looking for Summer 2023 Software Development Engineer Intern opportunities! Feel free to contact me at yethyuan@gmail.com
+    content: I'm actively looking for Summer 2023 Software Development Engineer Intern opportunities! Feel free to contact me at hire@yeyuan.pro
   card_recent_post:
     enable: true
     limit: 5 # if set 0 will show all
