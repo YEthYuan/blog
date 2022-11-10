@@ -2,81 +2,81 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://yethyuan.github.io/blog/cpp-stl.html</loc>
+    <loc>https://blog.yeyuan.pro/cpp-stl.html</loc>
     
-    <lastmod>2022-11-08</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://yethyuan.github.io/blog/article-title.html</loc>
-    
-    <lastmod>2022-11-08</lastmod>
+    <lastmod>2022-11-10</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://yethyuan.github.io/blog/hello-world.html</loc>
+    <loc>https://blog.yeyuan.pro/article-title.html</loc>
     
-    <lastmod>2022-11-08</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://yethyuan.github.io/blog/suan-fa-jing-sai-dai-ma-pian-duan-ji-lu.html</loc>
-    
-    <lastmod>2022-11-08</lastmod>
+    <lastmod>2022-11-10</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://yethyuan.github.io/blog/bian-yi-yuan-li-ll1-wen-fa-zong-jie.html</loc>
+    <loc>https://blog.yeyuan.pro/hello-world.html</loc>
     
-    <lastmod>2022-11-08</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://yethyuan.github.io/blog/ji-suan-ji-wang-luo-wu-ceng-xie-yi-zheng-li.html</loc>
-    
-    <lastmod>2022-11-08</lastmod>
+    <lastmod>2022-11-10</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://yethyuan.github.io/blog/categories/index.html</loc>
+    <loc>https://blog.yeyuan.pro/suan-fa-jing-sai-dai-ma-pian-duan-ji-lu.html</loc>
     
-    <lastmod>2022-11-08</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://yethyuan.github.io/blog/link/index.html</loc>
-    
-    <lastmod>2022-11-08</lastmod>
+    <lastmod>2022-11-10</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://yethyuan.github.io/blog/tags/index.html</loc>
+    <loc>https://blog.yeyuan.pro/bian-yi-yuan-li-ll1-wen-fa-zong-jie.html</loc>
     
-    <lastmod>2022-11-08</lastmod>
+    <lastmod>2022-11-10</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.yeyuan.pro/ji-suan-ji-wang-luo-wu-ceng-xie-yi-zheng-li.html</loc>
+    
+    <lastmod>2022-11-10</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.yeyuan.pro/categories/index.html</loc>
+    
+    <lastmod>2022-11-10</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.yeyuan.pro/link/index.html</loc>
+    
+    <lastmod>2022-11-10</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.yeyuan.pro/tags/index.html</loc>
+    
+    <lastmod>2022-11-10</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -84,51 +84,51 @@
   
 
   <url>
-    <loc>https://yethyuan.github.io/blog</loc>
-    <lastmod>2022-11-08</lastmod>
+    <loc>https://blog.yeyuan.pro/</loc>
+    <lastmod>2022-11-10</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
 
   
   <url>
-    <loc>https://yethyuan.github.io/blog/tags/CN/</loc>
-    <lastmod>2022-11-08</lastmod>
+    <loc>https://blog.yeyuan.pro/tags/CN/</loc>
+    <lastmod>2022-11-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://yethyuan.github.io/blog/tags/C/</loc>
-    <lastmod>2022-11-08</lastmod>
+    <loc>https://blog.yeyuan.pro/tags/C/</loc>
+    <lastmod>2022-11-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://yethyuan.github.io/blog/tags/%E7%AE%97%E6%B3%95/</loc>
-    <lastmod>2022-11-08</lastmod>
+    <loc>https://blog.yeyuan.pro/tags/%E7%AE%97%E6%B3%95/</loc>
+    <lastmod>2022-11-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://yethyuan.github.io/blog/tags/%E7%9F%A5%E8%AF%86%E6%95%B4%E7%90%86/</loc>
-    <lastmod>2022-11-08</lastmod>
+    <loc>https://blog.yeyuan.pro/tags/%E7%9F%A5%E8%AF%86%E6%95%B4%E7%90%86/</loc>
+    <lastmod>2022-11-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://yethyuan.github.io/blog/tags/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/</loc>
-    <lastmod>2022-11-08</lastmod>
+    <loc>https://blog.yeyuan.pro/tags/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/</loc>
+    <lastmod>2022-11-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://yethyuan.github.io/blog/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</loc>
-    <lastmod>2022-11-08</lastmod>
+    <loc>https://blog.yeyuan.pro/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</loc>
+    <lastmod>2022-11-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
@@ -136,22 +136,22 @@
 
   
   <url>
-    <loc>https://yethyuan.github.io/blog/categories/Algorithm/</loc>
-    <lastmod>2022-11-08</lastmod>
+    <loc>https://blog.yeyuan.pro/categories/Algorithm/</loc>
+    <lastmod>2022-11-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://yethyuan.github.io/blog/categories/Compiler/</loc>
-    <lastmod>2022-11-08</lastmod>
+    <loc>https://blog.yeyuan.pro/categories/Compiler/</loc>
+    <lastmod>2022-11-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://yethyuan.github.io/blog/categories/Computer-Network/</loc>
-    <lastmod>2022-11-08</lastmod>
+    <loc>https://blog.yeyuan.pro/categories/Computer-Network/</loc>
+    <lastmod>2022-11-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
