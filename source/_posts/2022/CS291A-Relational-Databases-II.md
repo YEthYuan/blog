@@ -177,3 +177,38 @@ Two-phase locking (2PL) is a concurrency control method that guarantees `seriali
 The two phases are:
 
 > Acquire Locks -> Release Locks
+
+#### Protocol
+
+- Each transaction must obtain a `shared` lock on an object before **reading**.
+- Each transaction must obtain an `exclusive` lock on an object before **writing**.
+- If a transaction holds an exclusive lock on an object, no other transaction can obtain any lock on that object.
+- A transaction cannot request additional locks once it releases any locks.
+
+#### Potential Issue
+
+|    T1     |  T2  |
+| :-------: | :--: |
+|   R(A)    |      |
+|   W(A)    |      |
+| unlock(A) |      |
+|           | R(A) |
+|    ...    | ...  |
+|  cancel   |      |
+
+*What happens to T2 when T1 cancels the transaction?*
+
+### Strong Strict Two-Phase Locking
+
+> 2PL can result in cascading rollbacks.
+>
+> SS2PL allows only conflict serializable schedules.
+
+#### Protocol
+
+- Each transaction must obtain a `shared `lock on an object before **reading**.
+- Each transaction must obtain an `exclusive `lock on an object before **writing**.
+- If a transaction holds an exclusive lock on an object, no other transaction can obtain any lock on that object.
+- **All locks held by a transaction are released when the transaction completes.**
+
+This approach avoids the problem with cascading rollbacks.
