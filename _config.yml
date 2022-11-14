@@ -18,7 +18,7 @@ timezone: ''
 url: https://blog.yeyuan.pro/
 root: /
 # permalink: :year/:month/:day/:title/
-permalink: /posts/:title.html
+permalink: /posts/:year/:title.html
 permalink_defaults:
 pretty_urls:
   trailing_index: true # Set to false to remove trailing 'index.html' from permalinks
@@ -35,9 +35,9 @@ i18n_dir: :lang
 skip_render:
 
 # Writing
-new_post_name: :title.md # File name of new posts
+new_post_name: :year/:title.md # File name of new posts
 default_layout: post
-titlecase: false # Transform title into titlecase
+titlecase: true # Transform title into titlecase
 external_link:
   enable: true # Open external links in new tab
   field: site # Apply to the whole site
