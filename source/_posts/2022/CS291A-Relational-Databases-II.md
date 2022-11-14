@@ -154,7 +154,26 @@ Most general purpose relational databases default to employing `conflict-seriali
 
 ## Locks
 
-- A lock is a system object associated with a shared resource such as a data item, a row, or a page in memory.
-- A database lock may need to be acquired by a transaction before accessing the object.
+- A lock is a system object associated with a `shared resource` such as a data item, a row, or a page in memory.
+- A database lock may need to be **acquired by a transaction before accessing the object**.
 - Locks prevent undesired, incorrect, or inconsistent operations on shared resources by concurrent transactions.
 
+### Types of locks
+
+#### Write-lock
+
+- Blocks **writes and reads**
+- Also called **exclusive lock**
+
+#### Read-lock
+
+- Blocks **writes**
+- Also called **shared lock** (other reads can happen concurrently)
+
+### Two-Phase Locking
+
+Two-phase locking (2PL) is a concurrency control method that guarantees `serializability`.
+
+The two phases are:
+
+> Acquire Locks -> Release Locks
