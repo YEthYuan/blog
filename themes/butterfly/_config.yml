@@ -3,7 +3,7 @@
 # --------------------------------------
 
 menu:
-  Home: https://yeyuan.pro/ || fas fa-home
+  Home: / || fas fa-home
   Archives: /archives/ || fas fa-archive
   Tags: /tags/ || fas fa-tags
   Categories: /categories/ || fas fa-folder-open
@@ -36,6 +36,7 @@ copy:
 #   icon: link || the description
 social:
   fa-solid fa-house-chimney: / || Home
+  fa-solid fa-user: https://yeyuan.pro/ || About me
   # fab fa-github: https://github.com/YEthYuan || Github
   fas fa-envelope: mailto:maxwell.yuanyeh@gmail.com || Email
   fa-solid fa-graduation-cap: https://scholar.google.com/citations?hl=en&user=HjmRtpQAAAAJ || Google Scholar
