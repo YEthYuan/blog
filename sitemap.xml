@@ -92,6 +92,15 @@
   </url>
   
   <url>
+    <loc>https://blog.yeyuan.pro/posts/2022/cs291a-tsung-load-testing.html</loc>
+    
+    <lastmod>2022-11-15</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://blog.yeyuan.pro/categories/index.html</loc>
     
     <lastmod>2022-11-15</lastmod>
@@ -211,6 +220,13 @@
     <priority>0.2</priority>
   </url>
   
+  <url>
+    <loc>https://blog.yeyuan.pro/tags/Testing/</loc>
+    <lastmod>2022-11-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
 
   
   <url>
@@ -250,6 +266,13 @@
   
   <url>
     <loc>https://blog.yeyuan.pro/categories/Database/</loc>
+    <lastmod>2022-11-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.yeyuan.pro/categories/Tools/</loc>
     <lastmod>2022-11-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>

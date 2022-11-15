@@ -1,0 +1,380 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Load Testing With Tsung | Ye Yuan's Blog</title><meta name="author" content="Ye Yuan"><meta name="copyright" content="Ye Yuan"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="What should we observe during load testing? Response times Error rates Synthetic user success rate  We want to create load-test flows that resemble real traffic. There are a few things to consider:  E">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Load Testing With Tsung">
+<meta property="og:url" content="https://blog.yeyuan.pro/posts/2022/cs291a-tsung-load-testing.html">
+<meta property="og:site_name" content="Ye Yuan&#39;s Blog">
+<meta property="og:description" content="What should we observe during load testing? Response times Error rates Synthetic user success rate  We want to create load-test flows that resemble real traffic. There are a few things to consider:  E">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://picsum.photos/1920/1080?blur=2&random=7">
+<meta property="article:published_time" content="2022-11-14T22:28:33.000Z">
+<meta property="article:modified_time" content="2022-11-15T06:56:04.203Z">
+<meta property="article:author" content="Ye Yuan">
+<meta property="article:tag" content="EN">
+<meta property="article:tag" content="UCSB">
+<meta property="article:tag" content="CS291A">
+<meta property="article:tag" content="Testing">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://picsum.photos/1920/1080?blur=2&random=7"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://blog.yeyuan.pro/posts/2022/cs291a-tsung-load-testing"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-KTYXD67M5V"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-KTYXD67M5V');
+</script><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: {"limitDay":500,"position":"top","messagePrev":"It has been","messageNext":"days since the last update, the content of the article may be outdated."},
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"Author: Ye Yuan","link":"Link: ","source":"Source: Ye Yuan's Blog","info":"Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source."}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"Traditional Chinese Activated Manually","cht_to_chs":"Simplified Chinese Activated Manually","day_to_night":"Dark Mode Activated Manually","night_to_day":"Light Mode Activated Manually","bgLight":"#49b1f5","bgDark":"#2d3035","position":"bottom-left"},
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: true,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Load Testing With Tsung',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-11-15 06:56:04'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+          const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+          const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+          const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+          if (t === undefined) {
+            if (isLightMode) activateLightMode()
+            else if (isDarkMode) activateDarkMode()
+            else if (isNotSpecified || hasNoSupport) {
+              const now = new Date()
+              const hour = now.getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else if (t === 'light') activateLightMode()
+          else activateDarkMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.1.0"></head><body><link rel="stylesheet" href="/css/custom/center-radar.css"/><script src="https://cdn.jsdelivr.net/npm/pace-js/pace.min.js"></script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">11</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">13</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">7</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" target="_blank" rel="noopener" href="https://yeyuan.pro/#about"><i class="fa-fw fa-solid fa-user"></i><span> About</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://picsum.photos/1920/1080?blur=2&amp;random=7')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Ye Yuan's Blog</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" target="_blank" rel="noopener" href="https://yeyuan.pro/#about"><i class="fa-fw fa-solid fa-user"></i><span> About</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Load Testing With Tsung</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2022-11-14T22:28:33.000Z" title="Created 2022-11-14 22:28:33">2022-11-14</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2022-11-15T06:56:04.203Z" title="Updated 2022-11-15 06:56:04">2022-11-15</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Tools/">Tools</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">Word count:</span><span class="word-count">1.5k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">Reading time:</span><span>9min</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Load Testing With Tsung"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="What-should-we-observe-during-load-testing"><a href="#What-should-we-observe-during-load-testing" class="headerlink" title="What should we observe during load testing?"></a>What should we observe during load testing?</h1><ul>
+<li>Response times</li>
+<li>Error rates</li>
+<li>Synthetic user success rate</li>
+</ul>
+<p>We want to create load-test flows that resemble real traffic. There are a few things to consider:</p>
+<ul>
+<li>Ensuring flows contain a mixture of reads and writes</li>
+<li>Ensuring variance within the flows themselves (not all users have the same habits)</li>
+<li>The test framework should be able to utilize data returned from prior requests (e.g., create a submission and make a comment on it)</li>
+</ul>
+<h1 id="Load-Testing-Tools"><a href="#Load-Testing-Tools" class="headerlink" title="Load Testing Tools"></a>Load Testing Tools</h1><h2 id="High-Performance-Tools"><a href="#High-Performance-Tools" class="headerlink" title="High Performance Tools"></a>High Performance Tools</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://httpd.apache.org/docs/2.4/programs/ab.html">apachebench</a> (ab)</li>
+<li><a target="_blank" rel="noopener" href="https://jmeter.apache.org/">Apache JMeter</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/httperf/httperf">httperf</a></li>
+<li><a target="_blank" rel="noopener" href="http://tsung.erlang-projects.org/">Tsung</a></li>
+</ul>
+<h2 id="Feature-rich-Tools"><a href="#Feature-rich-Tools" class="headerlink" title="Feature-rich Tools"></a>Feature-rich Tools</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/nuxeo/FunkLoad/">Funkload</a></li>
+<li><a target="_blank" rel="noopener" href="http://tsung.erlang-projects.org/">Tsung</a></li>
+</ul>
+<h2 id="Others"><a href="#Others" class="headerlink" title="Others"></a>Others</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://k6.io/docs/test-types/load-testing">k6</a></li>
+<li><a target="_blank" rel="noopener" href="https://locust.io/">Locust</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/newsapps/beeswithmachineguns">Bees with Machine Guns</a></li>
+</ul>
+<p>Tsung is a good choice as it is extremely configurable and delivers high performance.</p>
+<h1 id="Tsung-Usage"><a href="#Tsung-Usage" class="headerlink" title="Tsung Usage"></a>Tsung Usage</h1><h2 id="Testing-EC2-instances-from-EC2"><a href="#Testing-EC2-instances-from-EC2" class="headerlink" title="Testing EC2 instances from EC2"></a>Testing EC2 instances from EC2</h2><p>We should the test instances in the same region as our elastic beanstalk deployment. This decision provides us with:</p>
+<ul>
+<li>Lower cost: AWS charges for bandwidth outside of the region</li>
+<li>Predictability: fewer moving parts between the test instance and the stack</li>
+<li>Less representative testing: none of our real users will be in the data center</li>
+</ul>
+<p>The first two points are positive.</p>
+<p>The third point could be a concern, but since we are essentially using these sort of tests for comparison between code changes, we’re less concerned with being completely representative.</p>
+<h2 id="Launching-the-Tsung-Instance"><a href="#Launching-the-Tsung-Instance" class="headerlink" title="Launching the Tsung Instance"></a>Launching the Tsung Instance</h2><p>Connect to the jump-box:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -i TEAMNAME.pem TEAMNAME@ec2.cs291.com</span><br></pre></td></tr></table></figure>
+<p>Create an instance:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/bin/launch_tsung.sh</span><br></pre></td></tr></table></figure>
+<p>You can manually run the script commands in case you want to update any params.</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /bin/launch_tsung.sh</span><br></pre></td></tr></table></figure>
+<p>The output will provide you with the ssh command to access the instance.</p>
+<h2 id="The-Tsung-Instance"><a href="#The-Tsung-Instance" class="headerlink" title="The Tsung Instance"></a>The Tsung Instance</h2><p>The home directory of the Tsung instance contains one file and a symlink:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[ec2-user@ip-10-140-200-96 ~]$ ls</span><br><span class="line">tsung_example.xml</span><br></pre></td></tr></table></figure>
+<p><code>tsung_example.xml</code> is a sample Tsung load-test configuration file that establishes various connections to <a target="_blank" rel="noopener" href="https://cs291.com/">https://cs291.com</a>.</p>
+<p>Run this Tsung test via:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tsung -f tsung_example.xml -k start</span><br></pre></td></tr></table></figure>
+<p>Once Tsung starts, visit the URL listed in the output.</p>
+<h2 id="Tsung-Server"><a href="#Tsung-Server" class="headerlink" title="Tsung Server"></a>Tsung Server</h2><p>While Tsung runs (and continues to run after testing with the <code>-k</code> option) it provides a simple web interface.</p>
+<p><img src="https://yeyuan.pro/img/202211142255055.png" alt="Tsung Web Interface"></p>
+<h2 id="Tsung-Interface"><a href="#Tsung-Interface" class="headerlink" title="Tsung Interface"></a>Tsung Interface</h2><p>Out of the box, Tsung generates a report <code>/es/ts_web:report</code>, and a handful of graphs <code>/es/ts_web:graph</code>.</p>
+<p>The server, and web-based access to these files ceases to be accessible once the Tsung process is stopped. Restarting Tsung only makes the graphs from the current run available via the web interface.</p>
+<h2 id="Fetching-Tsung-results"><a href="#Fetching-Tsung-results" class="headerlink" title="Fetching Tsung results"></a>Fetching Tsung results</h2><p>Aside from fetching files through the web interface. You may want to obtain all of the Tsung results.</p>
+<p>Assuming your Tsung instance IP address is <code>54.166.5.220</code> then the following command will synchronize the Tsung result files from all runs to your ec2.cs291.com account:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rsync -auvL ec2-user@54.166.5.220:tsung_logs .</span><br></pre></td></tr></table></figure>
+<p>Running that command a second time will only fetch any new files (assuming you run it from the same path). <code>rsync</code> is awesome!</p>
+<h2 id="The-Tsung-XML-File-Structure"><a href="#The-Tsung-XML-File-Structure" class="headerlink" title="The Tsung XML File Structure"></a>The Tsung XML File Structure</h2><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span>?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">tsung</span> <span class="keyword">SYSTEM</span> <span class="string">&quot;/usr/local/share/tsung/tsung-1.0.dtd&quot;</span> [] &gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">tsung</span> <span class="attr">loglevel</span>=<span class="string">&quot;notice&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">clients</span>&gt;</span>...<span class="tag">&lt;/<span class="name">clients</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">servers</span>&gt;</span>...<span class="tag">&lt;/<span class="name">servers</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">load</span>&gt;</span>...<span class="tag">&lt;/<span class="name">load</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">options</span>&gt;</span>...<span class="tag">&lt;/<span class="name">options</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">sessions</span>&gt;</span>...<span class="tag">&lt;/<span class="name">sessions</span>&gt;</span></span><br><span class="line">  ...</span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">tsung</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>For a more complete discussion please see Tsung’s documentation: <a target="_blank" rel="noopener" href="http://tsung.erlang-projects.org/user_manual/configuration.html">http://tsung.erlang-projects.org/user_manual/configuration.html</a></p>
+<h2 id="Tsung-Clients-Section"><a href="#Tsung-Clients-Section" class="headerlink" title="Tsung Clients Section"></a>Tsung Clients Section</h2><p>Reference: <a target="_blank" rel="noopener" href="http://tsung.erlang-projects.org/user_manual/conf-client-server.html">http://tsung.erlang-projects.org/user_manual/conf-client-server.html</a></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">clients</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">client</span> <span class="attr">host</span>=<span class="string">&quot;localhost&quot;</span> <span class="attr">use_controller_vm</span>=<span class="string">&quot;true&quot;</span> <span class="attr">maxusers</span>=<span class="string">&#x27;30000&#x27;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">clients</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>The clients section specifies the clients to generate load from. You can use multiple tsung clients as part of a single test, and you may need to for your final load tests.</p>
+<h2 id="Tsung-Servers-Section"><a href="#Tsung-Servers-Section" class="headerlink" title="Tsung Servers Section"></a>Tsung Servers Section</h2><p>Reference: <a target="_blank" rel="noopener" href="http://tsung.erlang-projects.org/user_manual/conf-client-server.html">http://tsung.erlang-projects.org/user_manual/conf-client-server.html</a></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">servers</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">server</span> <span class="attr">host</span>=<span class="string">&quot;cs291.com&quot;</span> <span class="attr">port</span>=<span class="string">&quot;443&quot;</span> <span class="attr">type</span>=<span class="string">&quot;ssl&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">server</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">servers</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>The servers section specifies where you intend to connect to. For your tests you will always want to modify the <code>host</code> value to match your deployment’s domain.</p>
+<h2 id="Tsung-Load-Section"><a href="#Tsung-Load-Section" class="headerlink" title="Tsung Load Section"></a>Tsung Load Section</h2><p>Reference: <a target="_blank" rel="noopener" href="http://tsung.erlang-projects.org/user_manual/conf-load.html">http://tsung.erlang-projects.org/user_manual/conf-load.html</a></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">load</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">arrivalphase</span> <span class="attr">phase</span>=<span class="string">&quot;1&quot;</span> <span class="attr">duration</span>=<span class="string">&quot;60&quot;</span> <span class="attr">unit</span>=<span class="string">&quot;second&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">users</span> <span class="attr">arrivalrate</span>=<span class="string">&quot;2&quot;</span> <span class="attr">unit</span>=<span class="string">&quot;second&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">users</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">arrivalphase</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">arrivalphase</span> <span class="attr">phase</span>=<span class="string">&quot;2&quot;</span> <span class="attr">duration</span>=<span class="string">&quot;1&quot;</span> <span class="attr">unit</span>=<span class="string">&quot;minute&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">users</span> <span class="attr">interarrival</span>=<span class="string">&quot;2&quot;</span> <span class="attr">unit</span>=<span class="string">&quot;second&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">users</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">arrivalphase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">load</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>Here we describe two phases.</p>
+<p>The first phase lasts 60 seconds where 2 new users arrive (<code>arrivalrate</code>) each second.</p>
+<p>The second phase also lasts 60 seconds. Here 1 new user arrives (<code>interarrival</code>) every two seconds.</p>
+<h2 id="Tsung-Options-Section"><a href="#Tsung-Options-Section" class="headerlink" title="Tsung Options Section"></a>Tsung Options Section</h2><p>Reference: <a target="_blank" rel="noopener" href="http://tsung.erlang-projects.org/user_manual/conf-options.html">http://tsung.erlang-projects.org/user_manual/conf-options.html</a></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">options</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- Set connection timeout to 2 seconds --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">option</span> <span class="attr">name</span>=<span class="string">&quot;global_ack_timeout&quot;</span> <span class="attr">value</span>=<span class="string">&quot;2000&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">option</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">options</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h2 id="Tsung-Sessions-Section"><a href="#Tsung-Sessions-Section" class="headerlink" title="Tsung Sessions Section"></a>Tsung Sessions Section</h2><p>Reference: <a target="_blank" rel="noopener" href="http://tsung.erlang-projects.org/user_manual/conf-sessions.html">http://tsung.erlang-projects.org/user_manual/conf-sessions.html</a></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">sessions</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">session</span> <span class="attr">name</span>=<span class="string">&quot;http-example&quot;</span> <span class="attr">type</span>=<span class="string">&quot;ts_http&quot;</span> <span class="attr">weight</span>=<span class="string">&quot;1&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">request</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">http</span> <span class="attr">method</span>=<span class="string">&quot;GET&quot;</span> <span class="attr">url</span>=<span class="string">&quot;/&quot;</span> <span class="attr">version</span>=<span class="string">&quot;1.1&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">http</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">request</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">thinktime</span> <span class="attr">random</span>=<span class="string">&quot;true&quot;</span> <span class="attr">value</span>=<span class="string">&quot;2&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">thinktime</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">request</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">http</span> <span class="attr">contents</span>=<span class="string">&quot;user=foo&quot;</span> <span class="attr">method</span>=<span class="string">&quot;POST&quot;</span> <span class="attr">url</span>=<span class="string">&quot;/login&quot;</span> <span class="attr">version</span>=<span class="string">&quot;1.1&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">http</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">request</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">session</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">sessions</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>You can define multiple sessions and for each user one will be chosen according to the weights.</p>
+<h2 id="Load-Testing-Your-Server"><a href="#Load-Testing-Your-Server" class="headerlink" title="Load Testing Your Server"></a>Load Testing Your Server</h2><ul>
+<li>Modify the <code>server</code> tag’s <code>host</code> section to point to your deployment’s domain.</li>
+<li>Add a <code>request</code> tag for each resource fetched when you load your application’s home page.</li>
+<li>Group requests to discrete <em>pages</em> in <code>&lt;transaction&gt;</code> if you want statistics on the individual pages.</li>
+</ul>
+<h2 id="Obtaining-Dynamic-Variables"><a href="#Obtaining-Dynamic-Variables" class="headerlink" title="Obtaining Dynamic Variables"></a>Obtaining Dynamic Variables</h2><p>Reference: <a target="_blank" rel="noopener" href="http://tsung.erlang-projects.org/user_manual/conf-advanced-features.html">http://tsung.erlang-projects.org/user_manual/conf-advanced-features.html</a></p>
+<p>Assume this HTML form:</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">&quot;/create&quot;</span> <span class="attr">method</span>=<span class="string">&quot;POST&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">input</span> <span class="attr">name</span>=<span class="string">&quot;auth_token&quot;</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">value</span>=<span class="string">&quot;gDTI=&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>The value <code>gDTI=</code> can be obtained from the response via:</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">request</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">dyn_variable</span> <span class="attr">name</span>=<span class="string">&quot;auth_token&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">dyn_variable</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">http</span> <span class="attr">method</span>=<span class="string">&quot;GET&quot;</span> <span class="attr">url</span>=<span class="string">&quot;/new&quot;</span> <span class="attr">version</span>=<span class="string">&quot;1.1&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">http</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">request</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h2 id="Using-Dynamic-Variables"><a href="#Using-Dynamic-Variables" class="headerlink" title="Using Dynamic Variables"></a>Using Dynamic Variables</h2><p>We previously set a variable named <code>auth_token</code>. Let’s use it.</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">request</span> <span class="attr">subst</span>=<span class="string">&quot;true&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">http</span> <span class="attr">content_type</span>=<span class="string">&quot;application/x-www-form-urlencoded&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">contents</span>=<span class="string">&quot;user=bboe<span class="symbol">&amp;amp;</span>auth_token=%%_auth_token%%&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">method</span>=<span class="string">&quot;POST&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">url</span>=<span class="string">&quot;/create&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">version</span>=<span class="string">&quot;1.1&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">http</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">request</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>Substitution is done via <code>%%_VARIABLE_NAME%%</code>.</p>
+<p>In rails CSRF protection values are usually stored in a hidden field named <code>authenticity_token</code>.</p>
+<p><strong>Note</strong>: The <code>&amp;</code> character must be encoded like <code>&amp;</code>. This causes a problem with the CSRF token.</p>
+<h2 id="Other-Dynamic-Variables"><a href="#Other-Dynamic-Variables" class="headerlink" title="Other Dynamic Variables"></a>Other Dynamic Variables</h2><p>The above example shows how to extract a variable from a form field. They can also be extracted from:</p>
+<ul>
+<li>HTML using <a target="_blank" rel="noopener" href="http://tsung.erlang-projects.org/user_manual/conf-advanced-features.html#xpath">XPath</a></li>
+<li>arbitrary text using <a target="_blank" rel="noopener" href="http://tsung.erlang-projects.org/user_manual/conf-advanced-features.html#regexp">Regexp</a></li>
+<li>JSON via <a target="_blank" rel="noopener" href="http://tsung.erlang-projects.org/user_manual/conf-advanced-features.html#jsonpath">JSONPath</a></li>
+</ul>
+<h2 id="Generating-Random-Variables"><a href="#Generating-Random-Variables" class="headerlink" title="Generating Random Variables"></a>Generating Random Variables</h2><p>Variables can be explicitly set via a few functions and occur anywhere in a <code>&lt;session&gt;</code>. (<a target="_blank" rel="noopener" href="http://tsung.erlang-projects.org/user_manual/conf-advanced-features.html#set-dynvars">ref</a>)</p>
+<h3 id="Random-Number-as-rndint"><a href="#Random-Number-as-rndint" class="headerlink" title="Random Number as rndint"></a>Random Number as <code>rndint</code></h3><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">setdynvars</span> <span class="attr">sourcetype</span>=<span class="string">&quot;random_number&quot;</span> <span class="attr">start</span>=<span class="string">&quot;3&quot;</span> <span class="attr">end</span>=<span class="string">&quot;32&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">var</span> <span class="attr">name</span>=<span class="string">&quot;rndint&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">setdynvars</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="Random-String-as-rndstring1"><a href="#Random-String-as-rndstring1" class="headerlink" title="Random String as rndstring1"></a>Random String as <code>rndstring1</code></h3><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">setdynvars</span> <span class="attr">sourcetype</span>=<span class="string">&quot;random_string&quot;</span> <span class="attr">length</span>=<span class="string">&quot;13&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">var</span> <span class="attr">name</span>=<span class="string">&quot;rndstring1&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">setdynvars</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>For a more complete example please see: <a target="_blank" rel="noopener" href="https://github.com/scalableinternetservices/demo/blob/master/load_tests/critical.xml">Demo App’s load_tests/critical.xml</a></p>
+<h1 id="Understanding-Tsung’s-Output"><a href="#Understanding-Tsung’s-Output" class="headerlink" title="Understanding Tsung’s Output"></a>Understanding Tsung’s Output</h1><h2 id="Tsung-Output"><a href="#Tsung-Output" class="headerlink" title="Tsung Output"></a>Tsung Output</h2><ul>
+<li><strong>connect</strong>: The duration of the connection establishment</li>
+<li><strong>page</strong>: Response time for each set of requests (a page is a group of requests not separated by a thinktime)</li>
+<li><strong>request</strong>: Response time for each request</li>
+<li><strong>session</strong>: The duration of a user’s session</li>
+</ul>
+<p><img src="https://yeyuan.pro/img/202211142255056.png" alt="Tsung Statistics"></p>
+<h2 id="Response-Time-Graph"><a href="#Response-Time-Graph" class="headerlink" title="Response Time Graph"></a>Response Time Graph</h2><p><img src="https://yeyuan.pro/img/202211142255057.png" alt="Tsung Response Time Graph"></p>
+<h2 id="Tsung-HTTP-Return-Codes"><a href="#Tsung-HTTP-Return-Codes" class="headerlink" title="Tsung HTTP Return Codes"></a>Tsung HTTP Return Codes</h2><p>Inspect the HTTP return code section:</p>
+<ul>
+<li>2XX and 3XX status codes are good</li>
+<li>4XX and 5XX status codes can indicate problems:<ul>
+<li>Too many requests?</li>
+<li>Server-side bugs?</li>
+<li>Bug in testing code?</li>
+</ul>
+</li>
+</ul>
+<p>Ideally you shouldn’t see any 4XX and 5XX status codes in your tests unless you are certain they are due to exceeding the load on your web server’s stack.</p>
+<h2 id="Error-Rate-Graph"><a href="#Error-Rate-Graph" class="headerlink" title="Error Rate Graph"></a>Error Rate Graph</h2><p><img src="https://yeyuan.pro/img/202211142255058.png" alt="Tsung Error Rate Graph"></p>
+<h2 id="Users-Graph"><a href="#Users-Graph" class="headerlink" title="Users Graph"></a>Users Graph</h2><p><img src="https://yeyuan.pro/img/202211142255059.png" alt="Tsung Users Graph"></p>
+<h2 id="Advice"><a href="#Advice" class="headerlink" title="Advice"></a>Advice</h2><h3 id="Reminder-Fetch-your-Tsung-data-as-soon-as-it-is-available"><a href="#Reminder-Fetch-your-Tsung-data-as-soon-as-it-is-available" class="headerlink" title="Reminder: Fetch your Tsung data as soon as it is available"></a>Reminder: Fetch your Tsung data as soon as it is available</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rsync -auvL ec2-user@54.166.5.220:tsung_logs .</span><br></pre></td></tr></table></figure>
+<h3 id="Use-tsplot-to-compare-separate-runs"><a href="#Use-tsplot-to-compare-separate-runs" class="headerlink" title="Use tsplot to compare separate runs:"></a>Use tsplot to compare separate runs:</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tsplot -d graphs m3_medium tsung_logs/20171108-2133/tsung.log m3_large tsung_logs/20171108-2146/tsung.log</span><br></pre></td></tr></table></figure>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a target="_blank" rel="noopener" href="https://yethyuan.github.io/">Ye Yuan</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://blog.yeyuan.pro/posts/2022/cs291a-tsung-load-testing.html">https://blog.yeyuan.pro/posts/2022/cs291a-tsung-load-testing.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/EN/">EN</a><a class="post-meta__tags" href="/tags/UCSB/">UCSB</a><a class="post-meta__tags" href="/tags/CS291A/">CS291A</a><a class="post-meta__tags" href="/tags/Testing/">Testing</a></div><div class="post_share"><div class="social-share" data-image="https://picsum.photos/1920/1080?blur=2&amp;random=7" data-sites="facebook,twitter,wechat,weibo,qq,google"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/posts/2022/cs291a-rdbms-scaling-ii.html"><img class="next-cover" src="https://picsum.photos/1920/1080?blur=2&amp;random=6" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">Relational Database Management System (RDBMS) Scaling - II</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>Related Articles</span></div><div class="relatedPosts-list"><div><a href="/posts/2022/cs291a-concurrency-control-in-rails.html" title="Concurrency Control in Rails"><img class="cover" src="https://picsum.photos/1920/1080?blur=2&random=2" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-11-13</div><div class="title">Concurrency Control in Rails</div></div></a></div><div><a href="/posts/2022/cs291a-rdbms-scaling-i.html" title="Relational Database Management System (RDBMS) Scaling - I"><img class="cover" src="https://picsum.photos/1920/1080?blur=2&random=2" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-11-14</div><div class="title">Relational Database Management System (RDBMS) Scaling - I</div></div></a></div><div><a href="/posts/2022/cs291a-rdbms-scaling-ii.html" title="Relational Database Management System (RDBMS) Scaling - II"><img class="cover" src="https://picsum.photos/1920/1080?blur=2&random=6" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-11-14</div><div class="title">Relational Database Management System (RDBMS) Scaling - II</div></div></a></div><div><a href="/posts/2022/cs291a-relational-databases-i.html" title="Relational Databases - I"><img class="cover" src="https://picsum.photos/1920/1080?blur=2&random=5" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-11-13</div><div class="title">Relational Databases - I</div></div></a></div><div><a href="/posts/2022/cs291a-relational-databases-ii.html" title="Relational Databases - II"><img class="cover" src="https://picsum.photos/1920/1080?blur=2&random=1" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-11-13</div><div class="title">Relational Databases - II</div></div></a></div><div><a href="/posts/2020/hello-world.html" title="Instructions to Use Hexo"><img class="cover" src="https://picsum.photos/1920/1080?blur=2&random=10" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-10-19</div><div class="title">Instructions to Use Hexo</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> Comment</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Ye Yuan</div><div class="author-info__description">A record of learnings in CS</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">11</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">13</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">7</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/YEthYuan"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="/" target="_blank" title="Home"><i class="fa-solid fa-house-chimney"></i></a><a class="social-icon" href="https://yeyuan.pro/" target="_blank" title="About me"><i class="fa-solid fa-user"></i></a><a class="social-icon" href="mailto:maxwell.yuanyeh@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="https://scholar.google.com/citations?hl=en&amp;user=HjmRtpQAAAAJ" target="_blank" title="Google Scholar"><i class="fa-solid fa-graduation-cap"></i></a><a class="social-icon" href="https://www.linkedin.com/in/yethyuan" target="_blank" title="LinkedIn"><i class="fa-brands fa-linkedin"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">I'm actively looking for Summer 2023 Software Development Engineer Intern opportunities! Feel free to contact me at hire@yeyuan.pro</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#What-should-we-observe-during-load-testing"><span class="toc-number">1.</span> <span class="toc-text">What should we observe during load testing?</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Load-Testing-Tools"><span class="toc-number">2.</span> <span class="toc-text">Load Testing Tools</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#High-Performance-Tools"><span class="toc-number">2.1.</span> <span class="toc-text">High Performance Tools</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Feature-rich-Tools"><span class="toc-number">2.2.</span> <span class="toc-text">Feature-rich Tools</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Others"><span class="toc-number">2.3.</span> <span class="toc-text">Others</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Tsung-Usage"><span class="toc-number">3.</span> <span class="toc-text">Tsung Usage</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Testing-EC2-instances-from-EC2"><span class="toc-number">3.1.</span> <span class="toc-text">Testing EC2 instances from EC2</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Launching-the-Tsung-Instance"><span class="toc-number">3.2.</span> <span class="toc-text">Launching the Tsung Instance</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#The-Tsung-Instance"><span class="toc-number">3.3.</span> <span class="toc-text">The Tsung Instance</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Tsung-Server"><span class="toc-number">3.4.</span> <span class="toc-text">Tsung Server</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Tsung-Interface"><span class="toc-number">3.5.</span> <span class="toc-text">Tsung Interface</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Fetching-Tsung-results"><span class="toc-number">3.6.</span> <span class="toc-text">Fetching Tsung results</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#The-Tsung-XML-File-Structure"><span class="toc-number">3.7.</span> <span class="toc-text">The Tsung XML File Structure</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Tsung-Clients-Section"><span class="toc-number">3.8.</span> <span class="toc-text">Tsung Clients Section</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Tsung-Servers-Section"><span class="toc-number">3.9.</span> <span class="toc-text">Tsung Servers Section</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Tsung-Load-Section"><span class="toc-number">3.10.</span> <span class="toc-text">Tsung Load Section</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Tsung-Options-Section"><span class="toc-number">3.11.</span> <span class="toc-text">Tsung Options Section</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Tsung-Sessions-Section"><span class="toc-number">3.12.</span> <span class="toc-text">Tsung Sessions Section</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Load-Testing-Your-Server"><span class="toc-number">3.13.</span> <span class="toc-text">Load Testing Your Server</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Obtaining-Dynamic-Variables"><span class="toc-number">3.14.</span> <span class="toc-text">Obtaining Dynamic Variables</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Using-Dynamic-Variables"><span class="toc-number">3.15.</span> <span class="toc-text">Using Dynamic Variables</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Other-Dynamic-Variables"><span class="toc-number">3.16.</span> <span class="toc-text">Other Dynamic Variables</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Generating-Random-Variables"><span class="toc-number">3.17.</span> <span class="toc-text">Generating Random Variables</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Random-Number-as-rndint"><span class="toc-number">3.17.1.</span> <span class="toc-text">Random Number as rndint</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Random-String-as-rndstring1"><span class="toc-number">3.17.2.</span> <span class="toc-text">Random String as rndstring1</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Understanding-Tsung%E2%80%99s-Output"><span class="toc-number">4.</span> <span class="toc-text">Understanding Tsung’s Output</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Tsung-Output"><span class="toc-number">4.1.</span> <span class="toc-text">Tsung Output</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Response-Time-Graph"><span class="toc-number">4.2.</span> <span class="toc-text">Response Time Graph</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Tsung-HTTP-Return-Codes"><span class="toc-number">4.3.</span> <span class="toc-text">Tsung HTTP Return Codes</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Error-Rate-Graph"><span class="toc-number">4.4.</span> <span class="toc-text">Error Rate Graph</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Users-Graph"><span class="toc-number">4.5.</span> <span class="toc-text">Users Graph</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Advice"><span class="toc-number">4.6.</span> <span class="toc-text">Advice</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Reminder-Fetch-your-Tsung-data-as-soon-as-it-is-available"><span class="toc-number">4.6.1.</span> <span class="toc-text">Reminder: Fetch your Tsung data as soon as it is available</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Use-tsplot-to-compare-separate-runs"><span class="toc-number">4.6.2.</span> <span class="toc-text">Use tsplot to compare separate runs:</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/posts/2022/cs291a-tsung-load-testing.html" title="Load Testing With Tsung"><img src="https://picsum.photos/1920/1080?blur=2&amp;random=7" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Load Testing With Tsung"/></a><div class="content"><a class="title" href="/posts/2022/cs291a-tsung-load-testing.html" title="Load Testing With Tsung">Load Testing With Tsung</a><time datetime="2022-11-14T22:28:33.000Z" title="Created 2022-11-14 22:28:33">2022-11-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/2022/cs291a-rdbms-scaling-ii.html" title="Relational Database Management System (RDBMS) Scaling - II"><img src="https://picsum.photos/1920/1080?blur=2&amp;random=6" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Relational Database Management System (RDBMS) Scaling - II"/></a><div class="content"><a class="title" href="/posts/2022/cs291a-rdbms-scaling-ii.html" title="Relational Database Management System (RDBMS) Scaling - II">Relational Database Management System (RDBMS) Scaling - II</a><time datetime="2022-11-14T19:48:10.000Z" title="Created 2022-11-14 19:48:10">2022-11-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/2022/cs291a-rdbms-scaling-i.html" title="Relational Database Management System (RDBMS) Scaling - I"><img src="https://picsum.photos/1920/1080?blur=2&amp;random=2" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Relational Database Management System (RDBMS) Scaling - I"/></a><div class="content"><a class="title" href="/posts/2022/cs291a-rdbms-scaling-i.html" title="Relational Database Management System (RDBMS) Scaling - I">Relational Database Management System (RDBMS) Scaling - I</a><time datetime="2022-11-14T17:48:10.000Z" title="Created 2022-11-14 17:48:10">2022-11-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/2022/cs291a-concurrency-control-in-rails.html" title="Concurrency Control in Rails"><img src="https://picsum.photos/1920/1080?blur=2&amp;random=2" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Concurrency Control in Rails"/></a><div class="content"><a class="title" href="/posts/2022/cs291a-concurrency-control-in-rails.html" title="Concurrency Control in Rails">Concurrency Control in Rails</a><time datetime="2022-11-13T19:16:34.000Z" title="Created 2022-11-13 19:16:34">2022-11-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/2022/cs291a-relational-databases-ii.html" title="Relational Databases - II"><img src="https://picsum.photos/1920/1080?blur=2&amp;random=1" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Relational Databases - II"/></a><div class="content"><a class="title" href="/posts/2022/cs291a-relational-databases-ii.html" title="Relational Databases - II">Relational Databases - II</a><time datetime="2022-11-13T16:54:43.000Z" title="Created 2022-11-13 16:54:43">2022-11-13</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('https://picsum.photos/1920/1080?blur=2&amp;random=7')"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By Ye Yuan</div><div class="footer_custom_text">Make the world a better place</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="Scroll To Comments"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (true){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><div class="js-pjax"><script>(() => {
+  const $mermaidWrap = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaidWrap.length) {
+    window.runMermaid = () => {
+      window.loadMermaid = true
+      const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+      Array.from($mermaidWrap).forEach((item, index) => {
+        const mermaidSrc = item.firstElementChild
+        const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+        const mermaidID = 'mermaid-' + index
+        const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+        mermaid.mermaidAPI.render(mermaidID, mermaidDefinition, (svgCode) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svgCode)
+        })
+      })
+    }
+
+    const loadMermaid = () => {
+      window.loadMermaid ? runMermaid() : getScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js').then(runMermaid)
+    }
+
+    window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+  }
+})()</script><script>function loadGiscus () {
+  let nowTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light'
+
+  const config = Object.assign({
+    src: 'https://giscus.app/client.js',
+    'data-repo': 'YEthYuan/blog',
+    'data-repo-id': 'R_kgDOG_mEtg',
+    'data-category-id': 'DIC_kwDOG_mEts4CSaaF',
+    'data-mapping': 'pathname',
+    'data-theme': nowTheme,
+    'data-reactions-enabled': '1',
+    crossorigin: 'anonymous',
+    async: true
+  },null)
+
+  let ele = document.createElement('script')
+  for (let key in config) {
+    ele.setAttribute(key, config[key])
+  }
+  document.getElementById('giscus-wrap').insertAdjacentElement('afterbegin',ele)
+}
+
+function changeGiscusTheme () {
+  const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light'
+
+  function sendMessage(message) {
+    const iframe = document.querySelector('iframe.giscus-frame');
+    if (!iframe) return;
+    iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+  }
+
+  sendMessage({
+    setConfig: {
+      theme: theme
+    }
+  });
+}
+
+if ('Giscus' === 'Giscus' || !true) {
+  if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+  else loadGiscus()
+} else {
+  function loadOtherComment () {
+    loadGiscus()
+  }
+}</script></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="true"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false,"scale":0.5},"react":{"opacityDefault":0.7,"opacityOnHover":0.8},"log":false});</script></body></html>
