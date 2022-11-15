@@ -148,6 +148,17 @@ live2d:
 sitemap:
   path: sitemap.xml
 
+# Pinyin permalink
 permalink_pinyin:
   enable: true
   separator: '-'   # default: '-'
+
+# RSS feed
+feed:
+  type: atom
+  path: atom.xml
+  limit: 20
+  hub:
+  content:
+  content_limit:
+  content_limit_delim: ' '

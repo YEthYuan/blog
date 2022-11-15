@@ -37,6 +37,7 @@ copy:
 social:
   fa-solid fa-house-chimney: / || Home
   fa-solid fa-user: https://yeyuan.pro/ || About me
+  fa-solid fa-square-rss: /atom.xml || RSS
   # fab fa-github: https://github.com/YEthYuan || Github
   fas fa-envelope: mailto:maxwell.yuanyeh@gmail.com || Email
   fa-solid fa-graduation-cap: https://scholar.google.com/citations?hl=en&user=HjmRtpQAAAAJ || Google Scholar
