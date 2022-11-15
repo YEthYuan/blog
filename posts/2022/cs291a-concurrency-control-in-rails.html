@@ -1,0 +1,347 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Concurrency Control in Rails | Ye Yuan's Blog</title><meta name="author" content="Ye Yuan"><meta name="copyright" content="Ye Yuan"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="Scenario We have many application servers running our application. We are using a relational database to ensure that each request observes a consistent view of the database. Locks in railsRails uses t">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Concurrency Control in Rails">
+<meta property="og:url" content="https://blog.yeyuan.pro/posts/2022/cs291a-concurrency-control-in-rails.html">
+<meta property="og:site_name" content="Ye Yuan&#39;s Blog">
+<meta property="og:description" content="Scenario We have many application servers running our application. We are using a relational database to ensure that each request observes a consistent view of the database. Locks in railsRails uses t">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://picsum.photos/1920/1080?blur=2&random=2">
+<meta property="article:published_time" content="2022-11-13T19:16:34.000Z">
+<meta property="article:modified_time" content="2022-11-15T01:02:34.777Z">
+<meta property="article:author" content="Ye Yuan">
+<meta property="article:tag" content="EN">
+<meta property="article:tag" content="UCSB">
+<meta property="article:tag" content="CS291A">
+<meta property="article:tag" content="RoR">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://picsum.photos/1920/1080?blur=2&random=2"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://blog.yeyuan.pro/posts/2022/cs291a-concurrency-control-in-rails"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: {"limitDay":500,"position":"top","messagePrev":"It has been","messageNext":"days since the last update, the content of the article may be outdated."},
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"Author: Ye Yuan","link":"Link: ","source":"Source: Ye Yuan's Blog","info":"Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source."}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"Traditional Chinese Activated Manually","cht_to_chs":"Simplified Chinese Activated Manually","day_to_night":"Dark Mode Activated Manually","night_to_day":"Light Mode Activated Manually","bgLight":"#49b1f5","bgDark":"#2d3035","position":"bottom-left"},
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: true,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Concurrency Control in Rails',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-11-15 01:02:34'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+          const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+          const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+          const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+          if (t === undefined) {
+            if (isLightMode) activateLightMode()
+            else if (isDarkMode) activateDarkMode()
+            else if (isNotSpecified || hasNoSupport) {
+              const now = new Date()
+              const hour = now.getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else if (t === 'light') activateLightMode()
+          else activateDarkMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.1.0"></head><body><link rel="stylesheet" href="/css/custom/center-radar.css"/><script src="https://cdn.jsdelivr.net/npm/pace-js/pace.min.js"></script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">8</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">12</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">6</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" target="_blank" rel="noopener" href="https://yeyuan.pro/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" target="_blank" rel="noopener" href="https://yeyuan.pro/#about"><i class="fa-fw fa-solid fa-user"></i><span> About</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://picsum.photos/1920/1080?blur=2&amp;random=2')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Ye Yuan's Blog</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" target="_blank" rel="noopener" href="https://yeyuan.pro/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" target="_blank" rel="noopener" href="https://yeyuan.pro/#about"><i class="fa-fw fa-solid fa-user"></i><span> About</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Concurrency Control in Rails</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2022-11-13T19:16:34.000Z" title="Created 2022-11-13 19:16:34">2022-11-13</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2022-11-15T01:02:34.777Z" title="Updated 2022-11-15 01:02:34">2022-11-15</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Ruby/">Ruby</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">Word count:</span><span class="word-count">1.2k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">Reading time:</span><span>7min</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Concurrency Control in Rails"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="Scenario"><a href="#Scenario" class="headerlink" title="Scenario"></a>Scenario</h1><p><img src="https://yeyuan.pro/img/202211140013562.png" alt="Database connectivity"></p>
+<p>We have many application servers running our application. We are using a relational database to ensure that each request observes a consistent view of the database.</p>
+<h1 id="Locks-in-rails"><a href="#Locks-in-rails" class="headerlink" title="Locks in rails"></a>Locks in rails</h1><p>Rails uses two types of concurrency control</p>
+<ul>
+<li>Optimistic Locking: Assume that database modifications are going to succeed. Throw an exception when they do not.</li>
+<li>Pessimistic Locking: Ensure that database modifications will succeed by explicitly avoiding conflict.</li>
+</ul>
+<h2 id="Optimistic-Lock"><a href="#Optimistic-Lock" class="headerlink" title="Optimistic Lock"></a>Optimistic Lock</h2><h3 id="Definition"><a href="#Definition" class="headerlink" title="Definition"></a>Definition</h3><p>Any ActiveRecord model will automatically utilize optimistic locking if an integer <code>lock_version</code> field is added to the object’s table. Whenever such an ActiveRecord object is read from the database, that object contains its associated <code>lock_version</code>. When an update for the object occurs, Rails compares the object’s <code>lock_version</code> to the most recent one in the database. If they differ a <code>StaleObjectException</code> is thrown. Otherwise, the data is written to the database, and the <code>lock_version</code> value is incremented. This optimistic locking is an application-level construct. The database does nothing more than storing the <code>lock_version</code> values.</p>
+<h3 id="Example"><a href="#Example" class="headerlink" title="Example"></a>Example</h3><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">c1 = Person.find(<span class="number">1</span>)</span><br><span class="line">c1.name = <span class="string">&quot;X Æ A-12&quot;</span></span><br><span class="line"></span><br><span class="line">c2 = Person.find(<span class="number">1</span>)</span><br><span class="line">c2.gender = <span class="string">&quot;X-Ash-A-12&quot;</span></span><br><span class="line"></span><br><span class="line">c1.save!  <span class="comment"># Succeeds</span></span><br><span class="line">c2.save!  <span class="comment"># throws StaleObjectException</span></span><br></pre></td></tr></table></figure>
+<h3 id="Strengths"><a href="#Strengths" class="headerlink" title="Strengths"></a>Strengths</h3><ul>
+<li>Predictable performance</li>
+<li>Lightweight</li>
+</ul>
+<h3 id="Weaknesses"><a href="#Weaknesses" class="headerlink" title="Weaknesses"></a>Weaknesses</h3><ul>
+<li>Have to write error handling code</li>
+<li>(or) errors will propagate to your users</li>
+</ul>
+<h2 id="Pessimistic-Lock"><a href="#Pessimistic-Lock" class="headerlink" title="Pessimistic Lock"></a>Pessimistic Lock</h2><h3 id="Definition-1"><a href="#Definition-1" class="headerlink" title="Definition"></a>Definition</h3><p>Easily done by calling <code>lock</code> along with ActiveRecord <code>find</code>. Whenever an ActiveRecord object is read from the database with that option an exclusive lock is acquired for the object. While this lock is held, the database prevents others from obtaining the lock, reading from, and writing to the object. The others are blocked until the object is unlocked. Implemented using the <code>SELECT FOR UPDATE</code> SQL.</p>
+<h3 id="Example-1"><a href="#Example-1" class="headerlink" title="Example"></a>Example</h3><h4 id="Passing"><a href="#Passing" class="headerlink" title="Passing"></a>Passing</h4><p>Request 1</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">transaction <span class="keyword">do</span></span><br><span class="line">  person = Person.lock.find(<span class="number">1</span>)</span><br><span class="line">  person.name = <span class="string">&quot;X Æ A-12&quot;</span></span><br><span class="line">  person.save!  <span class="comment"># works fine</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>Request 2</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">transaction <span class="keyword">do</span></span><br><span class="line">  person = Person.lock.find(<span class="number">1</span>)</span><br><span class="line">  person.name = <span class="string">&quot;X-Ash-A-12&quot;</span></span><br><span class="line">  person.save!  <span class="comment"># works fine</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<h4 id="Blocking"><a href="#Blocking" class="headerlink" title="Blocking"></a>Blocking</h4><p>Request 1</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">transaction <span class="keyword">do</span></span><br><span class="line">  person = Person.lock.find(<span class="number">1</span>)</span><br><span class="line">  person.name = <span class="string">&quot;X Æ A-12&quot;</span></span><br><span class="line">  my_long_procedure</span><br><span class="line">  person.save!</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>Request 2</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">transaction <span class="keyword">do</span></span><br><span class="line">  person = Person.lock.find(<span class="number">1</span>)</span><br><span class="line">  person.name = <span class="string">&quot;X-Ash-A-12&quot;</span></span><br><span class="line">  my_long_procedure</span><br><span class="line">  person.save!</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<h4 id="Issue-Deadlock"><a href="#Issue-Deadlock" class="headerlink" title="Issue: Deadlock"></a>Issue: Deadlock</h4><p>Request 1</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">transaction <span class="keyword">do</span></span><br><span class="line">  family = Family.lock.find(<span class="number">3</span>)</span><br><span class="line">  family.count += <span class="number">1</span></span><br><span class="line">  family.save!</span><br><span class="line">  person = Person.lock.find(<span class="number">1</span>)</span><br><span class="line">  person.name = <span class="string">&quot;X Æ A-12&quot;</span></span><br><span class="line">  person.save!</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>Request 2</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">transaction <span class="keyword">do</span></span><br><span class="line">  person = Person.lock.find(<span class="number">1</span>)</span><br><span class="line">  person.name = <span class="string">&quot;X-Ash-A-12&quot;</span></span><br><span class="line">  person.save!</span><br><span class="line">  family = Family.lock.find(<span class="number">3</span>)</span><br><span class="line">  family.count += <span class="number">1</span></span><br><span class="line">  family.save!</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<h3 id="Strengths-1"><a href="#Strengths-1" class="headerlink" title="Strengths"></a>Strengths</h3><ul>
+<li>Failed transactions are incredibly rare or nonexistent</li>
+</ul>
+<h3 id="Weaknesses-1"><a href="#Weaknesses-1" class="headerlink" title="Weaknesses"></a>Weaknesses</h3><ul>
+<li>Have to worry about deadlocks and avoiding them</li>
+<li>Performance is less predictable</li>
+</ul>
+<h1 id="DB-Bottlenecks"><a href="#DB-Bottlenecks" class="headerlink" title="DB Bottlenecks"></a>DB Bottlenecks</h1><p>By changing the way you interact with the Rails ORM (ActiveRecord) you can significantly improve performance.</p>
+<h2 id="Development-Mode-in-Rails"><a href="#Development-Mode-in-Rails" class="headerlink" title="Development Mode in Rails"></a>Development Mode in Rails</h2><p>In <em>development</em> mode, Rails will output the SQL it generates and executes to the application server log.</p>
+<p>To (temporarily) enable debugging in <em>production</em> mode, change <code>config/environments/production.rb</code> to contain:</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">config.log_level = <span class="symbol">:debug</span></span><br></pre></td></tr></table></figure>
+<h2 id="Investigation"><a href="#Investigation" class="headerlink" title="Investigation"></a>Investigation</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Processing <span class="keyword">by</span> SubmissionsController#index <span class="keyword">as</span> HTML</span><br><span class="line">Submission Load (<span class="number">0.5</span>ms)  <span class="keyword">SELECT</span> `submissions`.<span class="operator">*</span> <span class="keyword">FROM</span> `submissions`</span><br><span class="line">Community Load (<span class="number">0.3</span>ms)  <span class="keyword">SELECT</span>  `communities`.<span class="operator">*</span> <span class="keyword">FROM</span> `communities` <span class="keyword">WHERE</span> `communities`.`id` <span class="operator">=</span> <span class="number">1</span> LIMIT <span class="number">1</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="built_in">COUNT</span>(<span class="operator">*</span>) <span class="keyword">FROM</span> `comments` <span class="keyword">WHERE</span> `comments`.`submission_id` <span class="operator">=</span> <span class="number">1</span></span><br><span class="line"><span class="keyword">SELECT</span>  `communities`.<span class="operator">*</span> <span class="keyword">FROM</span> `communities` <span class="keyword">WHERE</span> `communities`.`id` <span class="operator">=</span> <span class="number">1</span> LIMIT <span class="number">1</span>  [[&quot;id&quot;, <span class="number">1</span>]]</span><br><span class="line"><span class="keyword">SELECT</span> <span class="built_in">COUNT</span>(<span class="operator">*</span>) <span class="keyword">FROM</span> `comments` <span class="keyword">WHERE</span> `comments`.`submission_id` <span class="operator">=</span> <span class="number">2</span></span><br><span class="line"><span class="keyword">SELECT</span>  `communities`.<span class="operator">*</span> <span class="keyword">FROM</span> `communities` <span class="keyword">WHERE</span> `communities`.`id` <span class="operator">=</span> <span class="number">1</span> LIMIT <span class="number">1</span>  [[&quot;id&quot;, <span class="number">1</span>]]</span><br><span class="line"><span class="keyword">SELECT</span> <span class="built_in">COUNT</span>(<span class="operator">*</span>) <span class="keyword">FROM</span> `comments` <span class="keyword">WHERE</span> `comments`.`submission_id` <span class="operator">=</span> <span class="number">3</span></span><br><span class="line"><span class="keyword">SELECT</span>  `communities`.<span class="operator">*</span> <span class="keyword">FROM</span> `communities` <span class="keyword">WHERE</span> `communities`.`id` <span class="operator">=</span> <span class="number">1</span> LIMIT <span class="number">1</span>  [[&quot;id&quot;, <span class="number">1</span>]]</span><br><span class="line">...</span><br><span class="line"><span class="keyword">SELECT</span>  `communities`.<span class="operator">*</span> <span class="keyword">FROM</span> `communities` <span class="keyword">WHERE</span> `communities`.`id` <span class="operator">=</span> <span class="number">20</span> LIMIT <span class="number">1</span>  [[&quot;id&quot;, <span class="number">20</span>]]</span><br><span class="line"><span class="keyword">SELECT</span> <span class="built_in">COUNT</span>(<span class="operator">*</span>) <span class="keyword">FROM</span> `comments` <span class="keyword">WHERE</span> `comments`.`submission_id` <span class="operator">=</span> <span class="number">400</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p> That is a lot of <code>SELECT</code> queries!</p>
+</blockquote>
+<p>We are issuing a ton of <code>SELECT</code> queries. The overhead associated with each is slowing us down.</p>
+<h2 id="Issue-fewer-queries"><a href="#Issue-fewer-queries" class="headerlink" title="Issue fewer queries."></a>Issue fewer queries.</h2><h3 id="Methodology"><a href="#Methodology" class="headerlink" title="Methodology"></a>Methodology</h3><ul>
+<li>Do not ask for the community each time</li>
+<li>Do not ask for the number of comments each time</li>
+</ul>
+<h3 id="Optimization-Reducing-N-1-Queries-in-Rails"><a href="#Optimization-Reducing-N-1-Queries-in-Rails" class="headerlink" title="Optimization: Reducing (N+1) Queries in Rails"></a>Optimization: Reducing (N+1) Queries in Rails</h3><p>(<strong>Before</strong>) Without <code>includes</code></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">SubmissionsController</span> &lt; <span class="title class_ inherited__">ApplicationController</span></span><br><span class="line">  <span class="keyword">def</span> <span class="title function_">index</span></span><br><span class="line">    <span class="variable">@submissions</span> = Submission.all</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>(<strong>After</strong>) With <code>includes</code></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">SubmissionsController</span> &lt; <span class="title class_ inherited__">ApplicationController</span></span><br><span class="line">  <span class="keyword">def</span> <span class="title function_">index</span></span><br><span class="line">    <span class="variable">@submissions</span> = Submission.includes(<span class="symbol">:comments</span>)</span><br><span class="line">                             .includes(<span class="symbol">:community</span>).all</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>Result</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">Result</span>: ActiveRecord <span class="number">39.6</span>ms</span><br><span class="line"></span><br><span class="line">Submission Load (<span class="number">0.9</span>ms)  <span class="keyword">SELECT</span> `submissions`.<span class="operator">*</span> <span class="keyword">FROM</span> `submissions`</span><br><span class="line">Comment Load (<span class="number">38.3</span>ms)  <span class="keyword">SELECT</span> `comments`.<span class="operator">*</span> <span class="keyword">FROM</span> `comments` <span class="keyword">WHERE</span> `comments`.`submission_id` <span class="keyword">IN</span> (<span class="number">1</span>, <span class="number">2</span>,... <span class="number">399</span>, <span class="number">400</span>)</span><br><span class="line">Community Load (<span class="number">0.4</span>ms)  <span class="keyword">SELECT</span> `communities`.<span class="operator">*</span> <span class="keyword">FROM</span> `communities` <span class="keyword">WHERE</span> `communities`.`id` <span class="keyword">IN</span> (<span class="number">1</span>, <span class="number">2</span>, ..<span class="number">.19</span>, <span class="number">20</span>)</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://guides.rubyonrails.org/active_record_querying.html#includes">https://guides.rubyonrails.org/active_record_querying.html#includes</a></p>
+<p>With <code>includes</code>, Active Record ensures that all of the specified associations are loaded using the minimum possible number of queries.</p>
+<p>Revisiting the above case using the <code>includes</code> method, we could rewrite <code>Book.limit(10)</code> to eager load authors:</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">books = Book.includes(<span class="symbol">:author</span>).limit(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">books.each <span class="keyword">do</span> |<span class="params">book</span>|</span><br><span class="line">  puts book.author.last_name</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>The above code will execute just <strong>2</strong> queries, as opposed to the <strong>11</strong> queries from the original case:</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable constant_">SELECT</span> books.* <span class="variable constant_">FROM</span> books <span class="variable constant_">LIMIT</span> <span class="number">10</span></span><br><span class="line"><span class="variable constant_">SELECT</span> authors.* <span class="variable constant_">FROM</span> authors</span><br><span class="line">  <span class="variable constant_">WHERE</span> authors.book_id <span class="variable constant_">IN</span> (<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>,<span class="number">10</span>)</span><br></pre></td></tr></table></figure>
+</blockquote>
+<h2 id="Further-optimization-SQL-Explanation"><a href="#Further-optimization-SQL-Explanation" class="headerlink" title="Further optimization: SQL Explanation"></a>Further optimization: SQL Explanation</h2><p>Sometimes things are still slow even when the number of queries is minimized. SQL provides an <code>EXPLAIN</code> statement that can be used to analyze individual queries.</p>
+<p>When a query starts with <code>EXPLAIN</code>…</p>
+<ul>
+<li>the query is not actually executed</li>
+<li>the produced output will help us identify potential improvements</li>
+<li>e.g. sequential vs index scan, startup vs total cost</li>
+</ul>
+<h2 id="Optimizations"><a href="#Optimizations" class="headerlink" title="Optimizations"></a>Optimizations</h2><p>Three primary ways to optimize SQL queries:</p>
+<ul>
+<li>Add or modify indexes</li>
+<li>Modify the table structure</li>
+<li>Directly optimize the query</li>
+</ul>
+<h3 id="SQL-Indexes"><a href="#SQL-Indexes" class="headerlink" title="SQL Indexes"></a>SQL Indexes</h3><p>An index is a fast, ordered, compact structure (often B-tree) for identifying row locations. When an index is provided on a column that is to be filtered (searching for a particular item), the database is able to quickly find that information. Indexes can exist on a single column, or across multiple columns. Multi-column indexes are useful when filtering on two columns (e.g., CS classes that are not full).</p>
+<p>To add an index on the <code>name</code> field of the <code>Product</code> table, create a migration containing:</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">AddNameIndexProducts</span> &lt; <span class="title class_ inherited__">ActiveRecord::Migration</span></span><br><span class="line">  <span class="keyword">def</span> <span class="title function_">change</span></span><br><span class="line">    add_index <span class="symbol">:products</span>, <span class="symbol">:name</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<h3 id="Foreign-Keys"><a href="#Foreign-Keys" class="headerlink" title="Foreign Keys"></a>Foreign Keys</h3><p>By default, when dealing with relationships between <code>ActiveRecord</code> objects, Rails will validate the constraints in the <strong>application layer</strong>. For example, an <code>Employee</code> object should have a <code>Company</code> that they work for. Assuming the relationship is defined properly, Rails will enforce that when creating an <code>Employee</code>, the associated <code>Company</code> exists. Many databases, have built-in support for enforcing such constraints. With rails, one can also take advantage of the database’s foreign key support via <a target="_blank" rel="noopener" href="http://guides.rubyonrails.org/active_record_migrations.html#foreign-keys">add_foreign_key</a>.</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">AddForeignKeyToOrders</span> &lt; <span class="title class_ inherited__">ActiveRecord::Migration</span></span><br><span class="line">  <span class="keyword">def</span> <span class="title function_">change</span></span><br><span class="line">    add_foreign_key <span class="symbol">:employees</span>, <span class="symbol">:companies</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<h3 id="Optimize-the-Table-Structure"><a href="#Optimize-the-Table-Structure" class="headerlink" title="Optimize the Table Structure"></a>Optimize the Table Structure</h3><p>Indexes work best when they can be kept in <strong>memory</strong>. Sometimes changing the field type, or index length can provide significant memory savings.</p>
+<p>If appropriate some options are:</p>
+<ul>
+<li>Reduce the length of a VARCHAR index if appropriate</li>
+<li>Use a smaller unsigned integer type</li>
+<li>Use an integer or enum field for statuses rather than a text-based value</li>
+</ul>
+<h3 id="Directly-Optimize-the-Query"><a href="#Directly-Optimize-the-Query" class="headerlink" title="Directly Optimize the Query"></a>Directly Optimize the Query</h3><p>Before</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">explain <span class="keyword">select</span> <span class="built_in">count</span>(<span class="operator">*</span>) <span class="keyword">from</span> txns <span class="keyword">where</span> parent_id <span class="operator">-</span> <span class="number">1600</span> <span class="operator">=</span> <span class="number">16340</span>;</span><br><span class="line"></span><br><span class="line">select_type: SIMPLE</span><br><span class="line"><span class="keyword">table</span>: txns</span><br><span class="line">type: index</span><br><span class="line">key: index_txns_on_reverse_txn_id</span><br><span class="line"><span class="keyword">rows</span>: <span class="number">439186</span></span><br><span class="line">Extra: <span class="keyword">Using</span> <span class="keyword">where</span>; <span class="keyword">Using</span> index</span><br></pre></td></tr></table></figure>
+<p>After</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">explain <span class="keyword">select</span> <span class="built_in">count</span>(<span class="operator">*</span>) <span class="keyword">from</span> txns <span class="keyword">where</span> parent_id <span class="operator">=</span> <span class="number">16340</span> <span class="operator">+</span> <span class="number">1600</span></span><br><span class="line"></span><br><span class="line">select_type: SIMPLE</span><br><span class="line"><span class="keyword">table</span>: txns</span><br><span class="line">type: const</span><br><span class="line">key: index_txns_on_reverse_txn_id</span><br><span class="line"><span class="keyword">rows</span>: <span class="number">1</span></span><br><span class="line">Extra: <span class="keyword">Using</span> index</span><br></pre></td></tr></table></figure>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a target="_blank" rel="noopener" href="https://yethyuan.github.io/">Ye Yuan</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://blog.yeyuan.pro/posts/2022/cs291a-concurrency-control-in-rails.html">https://blog.yeyuan.pro/posts/2022/cs291a-concurrency-control-in-rails.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/EN/">EN</a><a class="post-meta__tags" href="/tags/UCSB/">UCSB</a><a class="post-meta__tags" href="/tags/CS291A/">CS291A</a><a class="post-meta__tags" href="/tags/RoR/">RoR</a></div><div class="post_share"><div class="social-share" data-image="https://picsum.photos/1920/1080?blur=2&amp;random=2" data-sites="facebook,twitter,wechat,weibo,qq,google"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/posts/2022/cs291a-relational-databases-ii.html"><img class="next-cover" src="https://picsum.photos/1920/1080?blur=2&amp;random=4" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">Relational Databases - II</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>Related Articles</span></div><div class="relatedPosts-list"><div><a href="/posts/2022/cs291a-relational-databases-i.html" title="Relational Databases - I"><img class="cover" src="https://picsum.photos/1920/1080?blur=2&random=10" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-11-13</div><div class="title">Relational Databases - I</div></div></a></div><div><a href="/posts/2022/cs291a-relational-databases-ii.html" title="Relational Databases - II"><img class="cover" src="https://picsum.photos/1920/1080?blur=2&random=4" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-11-13</div><div class="title">Relational Databases - II</div></div></a></div><div><a href="/posts/2020/hello-world.html" title="Instructions to Use Hexo"><img class="cover" src="https://picsum.photos/1920/1080?blur=2&random=9" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-10-19</div><div class="title">Instructions to Use Hexo</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> Comment</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Ye Yuan</div><div class="author-info__description">A record of learnings in CS</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">8</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">12</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/YEthYuan"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://yeyuan.pro/" target="_blank" title="Home"><i class="fa-solid fa-house-chimney"></i></a><a class="social-icon" href="mailto:maxwell.yuanyeh@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="https://scholar.google.com/citations?hl=en&amp;user=HjmRtpQAAAAJ" target="_blank" title="Google Scholar"><i class="fa-solid fa-graduation-cap"></i></a><a class="social-icon" href="https://www.linkedin.com/in/yethyuan" target="_blank" title="LinkedIn"><i class="fa-brands fa-linkedin"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">I'm actively looking for Summer 2023 Software Development Engineer Intern opportunities! Feel free to contact me at hire@yeyuan.pro</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Scenario"><span class="toc-number">1.</span> <span class="toc-text">Scenario</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Locks-in-rails"><span class="toc-number">2.</span> <span class="toc-text">Locks in rails</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Optimistic-Lock"><span class="toc-number">2.1.</span> <span class="toc-text">Optimistic Lock</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Definition"><span class="toc-number">2.1.1.</span> <span class="toc-text">Definition</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Example"><span class="toc-number">2.1.2.</span> <span class="toc-text">Example</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Strengths"><span class="toc-number">2.1.3.</span> <span class="toc-text">Strengths</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Weaknesses"><span class="toc-number">2.1.4.</span> <span class="toc-text">Weaknesses</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pessimistic-Lock"><span class="toc-number">2.2.</span> <span class="toc-text">Pessimistic Lock</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Definition-1"><span class="toc-number">2.2.1.</span> <span class="toc-text">Definition</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Example-1"><span class="toc-number">2.2.2.</span> <span class="toc-text">Example</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Passing"><span class="toc-number">2.2.2.1.</span> <span class="toc-text">Passing</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Blocking"><span class="toc-number">2.2.2.2.</span> <span class="toc-text">Blocking</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Issue-Deadlock"><span class="toc-number">2.2.2.3.</span> <span class="toc-text">Issue: Deadlock</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Strengths-1"><span class="toc-number">2.2.3.</span> <span class="toc-text">Strengths</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Weaknesses-1"><span class="toc-number">2.2.4.</span> <span class="toc-text">Weaknesses</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#DB-Bottlenecks"><span class="toc-number">3.</span> <span class="toc-text">DB Bottlenecks</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Development-Mode-in-Rails"><span class="toc-number">3.1.</span> <span class="toc-text">Development Mode in Rails</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Investigation"><span class="toc-number">3.2.</span> <span class="toc-text">Investigation</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Issue-fewer-queries"><span class="toc-number">3.3.</span> <span class="toc-text">Issue fewer queries.</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Methodology"><span class="toc-number">3.3.1.</span> <span class="toc-text">Methodology</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Optimization-Reducing-N-1-Queries-in-Rails"><span class="toc-number">3.3.2.</span> <span class="toc-text">Optimization: Reducing (N+1) Queries in Rails</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Further-optimization-SQL-Explanation"><span class="toc-number">3.4.</span> <span class="toc-text">Further optimization: SQL Explanation</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Optimizations"><span class="toc-number">3.5.</span> <span class="toc-text">Optimizations</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#SQL-Indexes"><span class="toc-number">3.5.1.</span> <span class="toc-text">SQL Indexes</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Foreign-Keys"><span class="toc-number">3.5.2.</span> <span class="toc-text">Foreign Keys</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Optimize-the-Table-Structure"><span class="toc-number">3.5.3.</span> <span class="toc-text">Optimize the Table Structure</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Directly-Optimize-the-Query"><span class="toc-number">3.5.4.</span> <span class="toc-text">Directly Optimize the Query</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/posts/2022/cs291a-concurrency-control-in-rails.html" title="Concurrency Control in Rails"><img src="https://picsum.photos/1920/1080?blur=2&amp;random=2" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Concurrency Control in Rails"/></a><div class="content"><a class="title" href="/posts/2022/cs291a-concurrency-control-in-rails.html" title="Concurrency Control in Rails">Concurrency Control in Rails</a><time datetime="2022-11-13T19:16:34.000Z" title="Created 2022-11-13 19:16:34">2022-11-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/2022/cs291a-relational-databases-ii.html" title="Relational Databases - II"><img src="https://picsum.photos/1920/1080?blur=2&amp;random=4" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Relational Databases - II"/></a><div class="content"><a class="title" href="/posts/2022/cs291a-relational-databases-ii.html" title="Relational Databases - II">Relational Databases - II</a><time datetime="2022-11-13T16:54:43.000Z" title="Created 2022-11-13 16:54:43">2022-11-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/2022/cs291a-relational-databases-i.html" title="Relational Databases - I"><img src="https://picsum.photos/1920/1080?blur=2&amp;random=10" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Relational Databases - I"/></a><div class="content"><a class="title" href="/posts/2022/cs291a-relational-databases-i.html" title="Relational Databases - I">Relational Databases - I</a><time datetime="2022-11-13T16:10:27.000Z" title="Created 2022-11-13 16:10:27">2022-11-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/2021/ji-suan-ji-wang-luo-wu-ceng-xie-yi-zheng-li.html" title="TCP/IP五层协议整理"><img src="https://picsum.photos/1920/1080?blur=2&amp;random=9" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="TCP/IP五层协议整理"/></a><div class="content"><a class="title" href="/posts/2021/ji-suan-ji-wang-luo-wu-ceng-xie-yi-zheng-li.html" title="TCP/IP五层协议整理">TCP/IP五层协议整理</a><time datetime="2021-12-28T20:19:32.000Z" title="Created 2021-12-28 20:19:32">2021-12-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/2021/bian-yi-yuan-li-ll1-wen-fa-zong-jie.html" title="编译原理LL(1)文法总结"><img src="https://picsum.photos/1920/1080?blur=2&amp;random=9" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="编译原理LL(1)文法总结"/></a><div class="content"><a class="title" href="/posts/2021/bian-yi-yuan-li-ll1-wen-fa-zong-jie.html" title="编译原理LL(1)文法总结">编译原理LL(1)文法总结</a><time datetime="2021-12-21T13:03:32.000Z" title="Created 2021-12-21 13:03:32">2021-12-21</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('https://picsum.photos/1920/1080?blur=2&amp;random=2')"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By Ye Yuan</div><div class="footer_custom_text">Make the world a better place</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="Scroll To Comments"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (true){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><div class="js-pjax"><script>(() => {
+  const $mermaidWrap = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaidWrap.length) {
+    window.runMermaid = () => {
+      window.loadMermaid = true
+      const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+      Array.from($mermaidWrap).forEach((item, index) => {
+        const mermaidSrc = item.firstElementChild
+        const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+        const mermaidID = 'mermaid-' + index
+        const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+        mermaid.mermaidAPI.render(mermaidID, mermaidDefinition, (svgCode) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svgCode)
+        })
+      })
+    }
+
+    const loadMermaid = () => {
+      window.loadMermaid ? runMermaid() : getScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js').then(runMermaid)
+    }
+
+    window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+  }
+})()</script><script>function loadGiscus () {
+  let nowTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light'
+
+  const config = Object.assign({
+    src: 'https://giscus.app/client.js',
+    'data-repo': 'YEthYuan/blog',
+    'data-repo-id': 'R_kgDOG_mEtg',
+    'data-category-id': 'DIC_kwDOG_mEts4CSaaF',
+    'data-mapping': 'pathname',
+    'data-theme': nowTheme,
+    'data-reactions-enabled': '1',
+    crossorigin: 'anonymous',
+    async: true
+  },null)
+
+  let ele = document.createElement('script')
+  for (let key in config) {
+    ele.setAttribute(key, config[key])
+  }
+  document.getElementById('giscus-wrap').insertAdjacentElement('afterbegin',ele)
+}
+
+function changeGiscusTheme () {
+  const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light'
+
+  function sendMessage(message) {
+    const iframe = document.querySelector('iframe.giscus-frame');
+    if (!iframe) return;
+    iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+  }
+
+  sendMessage({
+    setConfig: {
+      theme: theme
+    }
+  });
+}
+
+if ('Giscus' === 'Giscus' || !true) {
+  if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+  else loadGiscus()
+} else {
+  function loadOtherComment () {
+    loadGiscus()
+  }
+}</script></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="true"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false,"scale":0.5},"react":{"opacityDefault":0.7,"opacityOnHover":0.8},"log":false});</script></body></html>
