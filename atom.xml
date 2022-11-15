@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Ye Yuan&#39;s Blog</title>
+  
+  <subtitle>Software Development Engineer, Backend, Fullstack, Cloud Natives, Edge Computing</subtitle>
+  <link href="https://blog.yeyuan.pro/atom.xml" rel="self"/>
+  
+  <link href="https://blog.yeyuan.pro/"/>
+  <updated>2022-11-15T07:46:48.856Z</updated>
+  <id>https://blog.yeyuan.pro/</id>
+  
+  <author>
+    <name>Ye Yuan</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Non-Relational Data Stores (NoSQL)</title>
+    <link href="https://blog.yeyuan.pro/posts/2022/cs291a-nosql.html"/>
+    <id>https://blog.yeyuan.pro/posts/2022/cs291a-nosql.html</id>
+    <published>2022-11-14T23:00:45.000Z</published>
+    <updated>2022-11-15T07:46:48.856Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html"></summary>
+        
+      
+    
+    
+    
+    <category term="Database" scheme="https://blog.yeyuan.pro/categories/Database/"/>
+    
+    
+    <category term="EN" scheme="https://blog.yeyuan.pro/tags/EN/"/>
+    
+    <category term="UCSB" scheme="https://blog.yeyuan.pro/tags/UCSB/"/>
+    
+    <category term="CS291A" scheme="https://blog.yeyuan.pro/tags/CS291A/"/>
+    
+    <category term="Database" scheme="https://blog.yeyuan.pro/tags/Database/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Load Testing With Tsung</title>
+    <link href="https://blog.yeyuan.pro/posts/2022/cs291a-tsung-load-testing.html"/>
+    <id>https://blog.yeyuan.pro/posts/2022/cs291a-tsung-load-testing.html</id>
+    <published>2022-11-14T22:28:33.000Z</published>
+    <updated>2022-11-15T07:46:48.856Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html"></summary>
+        
+      
+    
+    
+    
+    <category term="Tools" scheme="https://blog.yeyuan.pro/categories/Tools/"/>
+    
+    
+    <category term="EN" scheme="https://blog.yeyuan.pro/tags/EN/"/>
+    
+    <category term="UCSB" scheme="https://blog.yeyuan.pro/tags/UCSB/"/>
+    
+    <category term="CS291A" scheme="https://blog.yeyuan.pro/tags/CS291A/"/>
+    
+    <category term="Testing" scheme="https://blog.yeyuan.pro/tags/Testing/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Relational Database Management System (RDBMS) Scaling - II</title>
+    <link href="https://blog.yeyuan.pro/posts/2022/cs291a-rdbms-scaling-ii.html"/>
+    <id>https://blog.yeyuan.pro/posts/2022/cs291a-rdbms-scaling-ii.html</id>
+    <published>2022-11-14T19:48:10.000Z</published>
+    <updated>2022-11-15T07:46:48.856Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html"></summary>
+        
+      
+    
+    
+    
+    <category term="Database" scheme="https://blog.yeyuan.pro/categories/Database/"/>
+    
+    
+    <category term="EN" scheme="https://blog.yeyuan.pro/tags/EN/"/>
+    
+    <category term="UCSB" scheme="https://blog.yeyuan.pro/tags/UCSB/"/>
+    
+    <category term="CS291A" scheme="https://blog.yeyuan.pro/tags/CS291A/"/>
+    
+    <category term="Database" scheme="https://blog.yeyuan.pro/tags/Database/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Relational Database Management System (RDBMS) Scaling - I</title>
+    <link href="https://blog.yeyuan.pro/posts/2022/cs291a-rdbms-scaling-i.html"/>
+    <id>https://blog.yeyuan.pro/posts/2022/cs291a-rdbms-scaling-i.html</id>
+    <published>2022-11-14T17:48:10.000Z</published>
+    <updated>2022-11-15T07:46:48.856Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html"></summary>
+        
+      
+    
+    
+    
+    <category term="Database" scheme="https://blog.yeyuan.pro/categories/Database/"/>
+    
+    
+    <category term="EN" scheme="https://blog.yeyuan.pro/tags/EN/"/>
+    
+    <category term="UCSB" scheme="https://blog.yeyuan.pro/tags/UCSB/"/>
+    
+    <category term="CS291A" scheme="https://blog.yeyuan.pro/tags/CS291A/"/>
+    
+    <category term="Database" scheme="https://blog.yeyuan.pro/tags/Database/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Concurrency Control in Rails</title>
+    <link href="https://blog.yeyuan.pro/posts/2022/cs291a-concurrency-control-in-rails.html"/>
+    <id>https://blog.yeyuan.pro/posts/2022/cs291a-concurrency-control-in-rails.html</id>
+    <published>2022-11-13T19:16:34.000Z</published>
+    <updated>2022-11-15T07:46:48.856Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html"></summary>
+        
+      
+    
+    
+    
+    <category term="Ruby" scheme="https://blog.yeyuan.pro/categories/Ruby/"/>
+    
+    
+    <category term="EN" scheme="https://blog.yeyuan.pro/tags/EN/"/>
+    
+    <category term="UCSB" scheme="https://blog.yeyuan.pro/tags/UCSB/"/>
+    
+    <category term="CS291A" scheme="https://blog.yeyuan.pro/tags/CS291A/"/>
+    
+    <category term="RoR" scheme="https://blog.yeyuan.pro/tags/RoR/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Relational Databases - II</title>
+    <link href="https://blog.yeyuan.pro/posts/2022/cs291a-relational-databases-ii.html"/>
+    <id>https://blog.yeyuan.pro/posts/2022/cs291a-relational-databases-ii.html</id>
+    <published>2022-11-13T16:54:43.000Z</published>
+    <updated>2022-11-15T07:46:48.856Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html"></summary>
+        
+      
+    
+    
+    
+    <category term="Database" scheme="https://blog.yeyuan.pro/categories/Database/"/>
+    
+    
+    <category term="EN" scheme="https://blog.yeyuan.pro/tags/EN/"/>
+    
+    <category term="UCSB" scheme="https://blog.yeyuan.pro/tags/UCSB/"/>
+    
+    <category term="CS291A" scheme="https://blog.yeyuan.pro/tags/CS291A/"/>
+    
+    <category term="Database" scheme="https://blog.yeyuan.pro/tags/Database/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Relational Databases - I</title>
+    <link href="https://blog.yeyuan.pro/posts/2022/cs291a-relational-databases-i.html"/>
+    <id>https://blog.yeyuan.pro/posts/2022/cs291a-relational-databases-i.html</id>
+    <published>2022-11-13T16:10:27.000Z</published>
+    <updated>2022-11-15T07:46:48.856Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html"></summary>
+        
+      
+    
+    
+    
+    <category term="Database" scheme="https://blog.yeyuan.pro/categories/Database/"/>
+    
+    
+    <category term="EN" scheme="https://blog.yeyuan.pro/tags/EN/"/>
+    
+    <category term="UCSB" scheme="https://blog.yeyuan.pro/tags/UCSB/"/>
+    
+    <category term="CS291A" scheme="https://blog.yeyuan.pro/tags/CS291A/"/>
+    
+    <category term="Database" scheme="https://blog.yeyuan.pro/tags/Database/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>TCP/IP五层协议整理</title>
+    <link href="https://blog.yeyuan.pro/posts/2021/ji-suan-ji-wang-luo-wu-ceng-xie-yi-zheng-li.html"/>
+    <id>https://blog.yeyuan.pro/posts/2021/ji-suan-ji-wang-luo-wu-ceng-xie-yi-zheng-li.html</id>
+    <published>2021-12-28T20:19:32.000Z</published>
+    <updated>2022-11-15T07:46:48.856Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html"></summary>
+        
+      
+    
+    
+    
+    <category term="Computer Network" scheme="https://blog.yeyuan.pro/categories/Computer-Network/"/>
+    
+    
+    <category term="CN" scheme="https://blog.yeyuan.pro/tags/CN/"/>
+    
+    <category term="知识整理" scheme="https://blog.yeyuan.pro/tags/%E7%9F%A5%E8%AF%86%E6%95%B4%E7%90%86/"/>
+    
+    <category term="计算机网络" scheme="https://blog.yeyuan.pro/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>编译原理LL(1)文法总结</title>
+    <link href="https://blog.yeyuan.pro/posts/2021/bian-yi-yuan-li-ll1-wen-fa-zong-jie.html"/>
+    <id>https://blog.yeyuan.pro/posts/2021/bian-yi-yuan-li-ll1-wen-fa-zong-jie.html</id>
+    <published>2021-12-21T13:03:32.000Z</published>
+    <updated>2022-11-15T07:46:48.856Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html"></summary>
+        
+      
+    
+    
+    
+    <category term="Compiler" scheme="https://blog.yeyuan.pro/categories/Compiler/"/>
+    
+    
+    <category term="CN" scheme="https://blog.yeyuan.pro/tags/CN/"/>
+    
+    <category term="知识整理" scheme="https://blog.yeyuan.pro/tags/%E7%9F%A5%E8%AF%86%E6%95%B4%E7%90%86/"/>
+    
+    <category term="编译原理" scheme="https://blog.yeyuan.pro/tags/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>算法竞赛代码片段记录</title>
+    <link href="https://blog.yeyuan.pro/posts/2021/suan-fa-jing-sai-dai-ma-pian-duan-ji-lu.html"/>
+    <id>https://blog.yeyuan.pro/posts/2021/suan-fa-jing-sai-dai-ma-pian-duan-ji-lu.html</id>
+    <published>2021-12-02T14:06:00.000Z</published>
+    <updated>2022-11-15T07:46:48.856Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html"></summary>
+        
+      
+    
+    
+    
+    <category term="Algorithm" scheme="https://blog.yeyuan.pro/categories/Algorithm/"/>
+    
+    
+    <category term="CN" scheme="https://blog.yeyuan.pro/tags/CN/"/>
+    
+    <category term="算法" scheme="https://blog.yeyuan.pro/tags/%E7%AE%97%E6%B3%95/"/>
+    
+    <category term="知识整理" scheme="https://blog.yeyuan.pro/tags/%E7%9F%A5%E8%AF%86%E6%95%B4%E7%90%86/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>C++ STL整理-算法竞赛向</title>
+    <link href="https://blog.yeyuan.pro/posts/2021/cpp-stl.html"/>
+    <id>https://blog.yeyuan.pro/posts/2021/cpp-stl.html</id>
+    <published>2021-12-01T12:47:30.000Z</published>
+    <updated>2022-11-15T07:46:48.856Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html"></summary>
+        
+      
+    
+    
+    
+    <category term="Algorithm" scheme="https://blog.yeyuan.pro/categories/Algorithm/"/>
+    
+    
+    <category term="CN" scheme="https://blog.yeyuan.pro/tags/CN/"/>
+    
+    <category term="C++" scheme="https://blog.yeyuan.pro/tags/C/"/>
+    
+    <category term="算法" scheme="https://blog.yeyuan.pro/tags/%E7%AE%97%E6%B3%95/"/>
+    
+    <category term="知识整理" scheme="https://blog.yeyuan.pro/tags/%E7%9F%A5%E8%AF%86%E6%95%B4%E7%90%86/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Instructions to Use Hexo</title>
+    <link href="https://blog.yeyuan.pro/posts/2020/hello-world.html"/>
+    <id>https://blog.yeyuan.pro/posts/2020/hello-world.html</id>
+    <published>2020-10-19T16:10:27.000Z</published>
+    <updated>2022-11-15T07:46:48.856Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html"></summary>
+        
+      
+    
+    
+    
+    <category term="Misc" scheme="https://blog.yeyuan.pro/categories/Misc/"/>
+    
+    
+    <category term="EN" scheme="https://blog.yeyuan.pro/tags/EN/"/>
+    
+    <category term="Help" scheme="https://blog.yeyuan.pro/tags/Help/"/>
+    
+  </entry>
+  
+</feed>
