@@ -56,7 +56,16 @@
   </url>
   
   <url>
-    <loc>https://blog.yeyuan.pro/posts/2022/cs291a-rdbms-scaling.html</loc>
+    <loc>https://blog.yeyuan.pro/posts/2022/cs291a-rdbms-scaling-i.html</loc>
+    
+    <lastmod>2022-11-15</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.yeyuan.pro/posts/2022/cs291a-rdbms-scaling-ii.html</loc>
     
     <lastmod>2022-11-15</lastmod>
     

@@ -1,0 +1,363 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Relational Database Management System (RDBMS) Scaling - II | Ye Yuan's Blog</title><meta name="author" content="Ye Yuan"><meta name="copyright" content="Ye Yuan"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="Service Oriented Architecture (SOA) and MicroservicesService Oriented Architecture Partitioning splits data of the same type into separate, unrelated groups.  Service Oriented Architectures (SOA) do s">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Relational Database Management System (RDBMS) Scaling - II">
+<meta property="og:url" content="https://blog.yeyuan.pro/posts/2022/cs291a-rdbms-scaling-ii.html">
+<meta property="og:site_name" content="Ye Yuan&#39;s Blog">
+<meta property="og:description" content="Service Oriented Architecture (SOA) and MicroservicesService Oriented Architecture Partitioning splits data of the same type into separate, unrelated groups.  Service Oriented Architectures (SOA) do s">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://picsum.photos/1920/1080?blur=2&random=9">
+<meta property="article:published_time" content="2022-11-14T19:48:10.000Z">
+<meta property="article:modified_time" content="2022-11-15T06:28:00.248Z">
+<meta property="article:author" content="Ye Yuan">
+<meta property="article:tag" content="EN">
+<meta property="article:tag" content="UCSB">
+<meta property="article:tag" content="CS291A">
+<meta property="article:tag" content="Database">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://picsum.photos/1920/1080?blur=2&random=9"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://blog.yeyuan.pro/posts/2022/cs291a-rdbms-scaling-ii"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-KTYXD67M5V"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-KTYXD67M5V');
+</script><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: {"limitDay":500,"position":"top","messagePrev":"It has been","messageNext":"days since the last update, the content of the article may be outdated."},
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"Author: Ye Yuan","link":"Link: ","source":"Source: Ye Yuan's Blog","info":"Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source."}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"Traditional Chinese Activated Manually","cht_to_chs":"Simplified Chinese Activated Manually","day_to_night":"Dark Mode Activated Manually","night_to_day":"Light Mode Activated Manually","bgLight":"#49b1f5","bgDark":"#2d3035","position":"bottom-left"},
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: true,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Relational Database Management System (RDBMS) Scaling - II',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-11-15 06:28:00'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+          const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+          const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+          const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+          if (t === undefined) {
+            if (isLightMode) activateLightMode()
+            else if (isDarkMode) activateDarkMode()
+            else if (isNotSpecified || hasNoSupport) {
+              const now = new Date()
+              const hour = now.getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else if (t === 'light') activateLightMode()
+          else activateDarkMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.1.0"></head><body><link rel="stylesheet" href="/css/custom/center-radar.css"/><script src="https://cdn.jsdelivr.net/npm/pace-js/pace.min.js"></script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">10</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">12</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">6</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" target="_blank" rel="noopener" href="https://yeyuan.pro/#about"><i class="fa-fw fa-solid fa-user"></i><span> About</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://picsum.photos/1920/1080?blur=2&amp;random=9')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Ye Yuan's Blog</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" target="_blank" rel="noopener" href="https://yeyuan.pro/#about"><i class="fa-fw fa-solid fa-user"></i><span> About</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Relational Database Management System (RDBMS) Scaling - II</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2022-11-14T19:48:10.000Z" title="Created 2022-11-14 19:48:10">2022-11-14</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2022-11-15T06:28:00.248Z" title="Updated 2022-11-15 06:28:00">2022-11-15</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Database/">Database</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">Word count:</span><span class="word-count">1.3k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">Reading time:</span><span>8min</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Relational Database Management System (RDBMS) Scaling - II"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="Service-Oriented-Architecture-SOA-and-Microservices"><a href="#Service-Oriented-Architecture-SOA-and-Microservices" class="headerlink" title="Service Oriented Architecture (SOA) and Microservices"></a>Service Oriented Architecture (SOA) and Microservices</h1><h2 id="Service-Oriented-Architecture"><a href="#Service-Oriented-Architecture" class="headerlink" title="Service Oriented Architecture"></a>Service Oriented Architecture</h2><ul>
+<li><p><em>Partitioning</em> splits data of the same type into separate, unrelated groups.</p>
+</li>
+<li><p><em>Service Oriented Architectures</em> (SOA) do something different. They partition <code>both the data and the code</code> based on <strong>type</strong> and <strong>function</strong>. Like with partitioning, <strong>no joins can automatically be performed</strong> across these partitions.</p>
+</li>
+</ul>
+<h3 id="Stack"><a href="#Stack" class="headerlink" title="Stack"></a>Stack</h3><p>The primary concept behind SOA is having many focused mini-applications (microservices). Each of these focused mini-applications is called a <code>service</code>. When a front-end application server needs data to satisfy a request, instead of speaking to a database, <strong>it will request data from the appropriate service.</strong></p>
+<p><img src="https://yeyuan.pro/img/202211142226165.png" alt="Service Oriented Architecture"></p>
+<h3 id="Functions"><a href="#Functions" class="headerlink" title="Functions"></a>Functions</h3><p>Each service is broken out by <strong>logical function</strong>. E.g.:</p>
+<ul>
+<li><strong>Users</strong> service that handles <code>authentication</code>and <code>authorization</code></li>
+<li><strong>Billing</strong> service that handles <code>credit cards</code>and <code>subscriptions</code></li>
+<li><strong>Account</strong> subsystem that tracks<code>invoices</code></li>
+</ul>
+<h3 id="Communications"><a href="#Communications" class="headerlink" title="Communications"></a>Communications</h3><p>With <em>partitioning</em> the application server often only talks to <strong>a single partition per request</strong>. With <em>SOA</em> the front-end application server may communicate with many distinct services, and some of those services may talk to a handful of other services.</p>
+<h3 id="Benefits"><a href="#Benefits" class="headerlink" title="Benefits"></a>Benefits</h3><p>With SOA the deployment of services is <code>decoupled</code>. That means that each can be updated and scaled independently of the remainder of the system. This decoupling can provide <strong>isolated outages</strong> (billing is down for 5 minutes).</p>
+<p>Services lend themselves well to maintenance by a single development team thus minimizing conflicts between teams that would otherwise collectively work on a single monolithic application.</p>
+<h3 id="SOA-the-Demo-App"><a href="#SOA-the-Demo-App" class="headerlink" title="SOA the Demo App"></a>SOA the Demo App</h3><h4 id="Designs"><a href="#Designs" class="headerlink" title="Designs"></a>Designs</h4><ol>
+<li>Comments service can track comments and replies for each submission.</li>
+<li>Submissions service can be responsible for all the links that are submitted.</li>
+<li>Communities service can store the list of communities along with their creator.</li>
+<li>Users service can manage the users in the system.</li>
+</ol>
+<h4 id="Code"><a href="#Code" class="headerlink" title="Code"></a>Code</h4><p>Before</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">CommunitiesController</span> &lt; <span class="title class_ inherited__">ApplicationController</span></span><br><span class="line">  <span class="keyword">def</span> <span class="title function_">create</span></span><br><span class="line">    <span class="keyword">if</span> current_user.allowed_to_create_community?</span><br><span class="line">      Community.create!(params)</span><br><span class="line">      render <span class="symbol">:show</span> <span class="keyword">and</span> <span class="keyword">return</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    render <span class="symbol">:new</span>, <span class="symbol">status:</span> <span class="symbol">:unprocessable_entity</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>After</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">CommunitiesController</span> &lt; <span class="title class_ inherited__">ApplicationController</span></span><br><span class="line">  <span class="keyword">def</span> <span class="title function_">create</span></span><br><span class="line">    user = UsersService.get_user_from_session(cookie)</span><br><span class="line">    <span class="keyword">if</span> user.allowed_to_create_community?</span><br><span class="line">      CommunitiesService.create_submission!(params[<span class="string">&#x27;title&#x27;</span>],</span><br><span class="line">                                            params[<span class="string">&#x27;community&#x27;</span>],</span><br><span class="line">                                            user_id)</span><br><span class="line">      render <span class="symbol">:show</span> <span class="keyword">and</span> <span class="keyword">return</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    render <span class="symbol">:new</span>, <span class="symbol">status:</span> <span class="symbol">:unprocessable_entity</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<h3 id="SOA-Implementation"><a href="#SOA-Implementation" class="headerlink" title="SOA Implementation"></a>SOA Implementation</h3><p>SOA is often implemented by JSON over HTTP. RESTful APIs are common.</p>
+<h4 id="Why-JSON-REST-HTTP"><a href="#Why-JSON-REST-HTTP" class="headerlink" title="Why JSON/REST/HTTP?"></a>Why JSON/REST/HTTP?</h4><p>It’s very easy to do. In fact, rails makes you do work in order to <strong>not</strong> have a JSON API (assuming you are using <code>rails generate</code>). JSON APIs over HTTP are easily discovered. This permits (but doesn’t necessitate) less documentation as the API may be intuitive enough to use without knowing much more than the endpoints and their input. Using JSON/HTTP permits a shared technology stack. Rails on the front-end application servers, and Rails on the servers hosting the services.</p>
+<h4 id="Alternatives-to-JSON-HTTP-Rest"><a href="#Alternatives-to-JSON-HTTP-Rest" class="headerlink" title="Alternatives to JSON/HTTP/Rest"></a>Alternatives to JSON/HTTP/Rest</h4><p>The primary issue with JSON/HTTP/REST is <code>performance</code>. For high-performance internal APIs there are a few excellent options:</p>
+<ul>
+<li>Protocol Buffers (developed by Google)</li>
+<li>Apache Thrift (developed by Facebook)</li>
+</ul>
+<p><strong>High performance APIs often trade flexibility for performance.</strong> For instance they may require strongly typed data and as a result require more documentation.</p>
+<h4 id="Encoding-Data"><a href="#Encoding-Data" class="headerlink" title="Encoding Data"></a>Encoding Data</h4><ul>
+<li>Language specific:<ul>
+<li>JAVA - java.io.Serializable</li>
+<li>Ruby - Marshal</li>
+<li>Python - pickle</li>
+</ul>
+</li>
+<li>JSON, Apache Avro, XML, CSV, Binary</li>
+<li>Apache Thrift and Protocol Buffers</li>
+</ul>
+<h4 id="Modes-of-Dataflow"><a href="#Modes-of-Dataflow" class="headerlink" title="Modes of Dataflow"></a>Modes of Dataflow</h4><ul>
+<li>Via Databases</li>
+<li>Via Service Calls (RPC, REST, GraphQL)</li>
+<li>Via Async message passing (message brokers: IBM WebSphere, RabbitMQ, ActiveMQ, Apache Kafka, NATS, TIBCO)</li>
+</ul>
+<h3 id="SOA-Trade-offs"><a href="#SOA-Trade-offs" class="headerlink" title="SOA Trade-offs"></a>SOA Trade-offs</h3><h4 id="Strengths"><a href="#Strengths" class="headerlink" title="Strengths"></a>Strengths</h4><ul>
+<li>Small encapsulated code-bases</li>
+<li>Scales well as application size scales</li>
+<li>Scales well as the number of teams scale</li>
+</ul>
+<h4 id="Weaknesses"><a href="#Weaknesses" class="headerlink" title="Weaknesses"></a>Weaknesses</h4><ul>
+<li>May not scale with the number of users (e.g., increased load to authentication service)</li>
+<li>Transactions across services do not exist</li>
+<li>Consistent DB snapshots across services do not exist</li>
+<li>Application logic required to join data</li>
+</ul>
+<h1 id="Separating-Reads-from-Writes"><a href="#Separating-Reads-from-Writes" class="headerlink" title="Separating Reads from Writes"></a>Separating Reads from Writes</h1><h2 id="Database-Operations"><a href="#Database-Operations" class="headerlink" title="Database Operations"></a>Database Operations</h2><p><img src="https://yeyuan.pro/img/202211142226166.png" alt="Graph of Database Reads and Writes"></p>
+<p>This graph shows significantly more <em>reads</em> than <em>writes</em>. This may be the case for your application.</p>
+<h2 id="Database-Horizontal-Scaling"><a href="#Database-Horizontal-Scaling" class="headerlink" title="Database Horizontal Scaling"></a>Database Horizontal Scaling</h2><h3 id="Methdology"><a href="#Methdology" class="headerlink" title="Methdology"></a>Methdology</h3><p>In general, a relational database is hard to horizontally scale. However, when limited to a <code>read-only copies</code>, databases are very easy to horizontally scale.</p>
+<ul>
+<li>Set up separate machines to act as <strong>read replicas</strong></li>
+<li>Whenever any transaction commits to the <em>primary</em> database, send a copy to each <em>replica</em> and apply it</li>
+</ul>
+<p><img src="https://yeyuan.pro/img/202211142226167.png" alt="Database Primary Replica"></p>
+<h3 id="Replication"><a href="#Replication" class="headerlink" title="Replication"></a>Replication</h3><h4 id="Occurring-Time"><a href="#Occurring-Time" class="headerlink" title="Occurring Time"></a>Occurring Time</h4><p>The sending of data from the primary to its replicas (replication) can happen either <code>synchronously</code>or <code>asynchronously</code>.</p>
+<h5 id="Synchronous"><a href="#Synchronous" class="headerlink" title="Synchronous"></a>Synchronous</h5><p>When a transaction is committed to mater, the primary sends the transaction to its replicas and waits until applied by all before completing.</p>
+<p><strong>Pro:</strong> Consistency. Subsequent read requests will see changes.</p>
+<p><strong>Con:</strong> Performance. There may be many read replicas to apply changes to.</p>
+<h5 id="Asynchronous"><a href="#Asynchronous" class="headerlink" title="Asynchronous"></a>Asynchronous</h5><p>When a transaction is committed to the primary, the primary sends the transaction to its replicas but does not wait to see if the transaction is applied.</p>
+<h4 id="Replication-Levels"><a href="#Replication-Levels" class="headerlink" title="Replication Levels"></a>Replication Levels</h4><p><img src="https://yeyuan.pro/img/202211142226168.png" alt="Database Primary Replica"></p>
+<h5 id="Statement-level"><a href="#Statement-level" class="headerlink" title="Statement-level"></a>Statement-level</h5><p>Similar to streaming the journal from the primary to its replicas.</p>
+<h5 id="Block-level"><a href="#Block-level" class="headerlink" title="Block-level"></a>Block-level</h5><p>Instead of sending the SQL statements to the replicas, send the <strong>consequences</strong> of those statements. (The replicas only store the value of records)</p>
+<h5 id="Trade-offs"><a href="#Trade-offs" class="headerlink" title="Trade-offs"></a>Trade-offs</h5><p>Statement-level is <strong>faster</strong> than block-level, with a catch.</p>
+<p>An SQL statement is generally more compact than its consequences.</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">UPDATE</span> txns <span class="keyword">SET</span> amount<span class="operator">=</span><span class="number">5</span>;</span><br></pre></td></tr></table></figure>
+<p>The above query acts on all rows which may require a lot of data to transmit the consequences.</p>
+<p>However, SQL statements must now be deterministic:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">UPDATE</span> txns <span class="keyword">SET</span> amount<span class="operator">=</span><span class="number">5</span>, updated_at<span class="operator">=</span>NOW(); # What <span class="keyword">is</span> the <span class="keyword">value</span> <span class="keyword">of</span> NOW()?</span><br></pre></td></tr></table></figure>
+<p>Such values must be communicated from the primary to its replicas.</p>
+<h4 id="PostgreSQL-Replication"><a href="#PostgreSQL-Replication" class="headerlink" title="PostgreSQL Replication"></a>PostgreSQL Replication</h4><blockquote>
+<p>PostgreSQL streaming replication is <code>asynchronous</code>by default. If the primary server crashes then some transactions that were committed may not have been replicated to the standby server, causing data loss. The amount of data loss is proportional to the replication delay at the time of failover.</p>
+<p>When requesting synchronous replication, each commit of a write transaction will wait until confirmation is received that the commit has been written to the transaction log on disk of both the primary and standby server. The only possibility that data can be lost is if both the primary and the standby suffer crashes at the same time. This can provide a much higher level of durability, though only if the sysadmin is cautious about the placement and management of the two servers. Waiting for confirmation increases the user’s confidence that the changes will not be lost in the event of server crashes but it also necessarily increases the response time for the requesting transaction. The minimum wait time is the roundtrip time between primary to standby.</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.postgresql.org/docs/9.1/warm-standby.html#SYNCHRONOUS-REPLICATION">https://www.postgresql.org/docs/9.1/warm-standby.html#SYNCHRONOUS-REPLICATION</a></p>
+<h3 id="Demo-App-and-Read-Replicas"><a href="#Demo-App-and-Read-Replicas" class="headerlink" title="Demo App and Read Replicas"></a>Demo App and Read Replicas</h3><h4 id="read-replicas"><a href="#read-replicas" class="headerlink" title="read replicas"></a>read replicas</h4><p>The following pages would be served from read replicas:</p>
+<p><img src="https://yeyuan.pro/img/202211142226169.png" alt="Global Submission View"> <img src="https://yeyuan.pro/img/202211142226170.png" alt="Submissions View"></p>
+<h4 id="primary-database"><a href="#primary-database" class="headerlink" title="primary database"></a>primary database</h4><p>The controllers associated with the actions from following pages (create) would need to talk to the primary database.</p>
+<p><img src="https://yeyuan.pro/img/202211142226171.png" alt="Demo New Submission View"><img src="https://yeyuan.pro/img/202211142226172.png" alt="Demo New Comment View"></p>
+<h4 id="Rails-Read-Replica-Support"><a href="#Rails-Read-Replica-Support" class="headerlink" title="Rails Read Replica Support"></a>Rails Read Replica Support</h4><p>Rails 6 has first-class support for read replicas now. “Automatic switching” must be explictly configured and enabled:</p>
+<blockquote>
+<p>Automatic switching allows the application to switch from the primary to replica or replica to primary based on the HTTP verb and whether there was a recent write.</p>
+<p>If the application is receiving a POST, PUT, DELETE, or PATCH request the application will automatically write to the primary. For the specified time after the write the application will read from the primary. For a GET or HEAD request the application will read from the replica unless there was a recent write.</p>
+<p>Rails guarantees “read your own write” and will send your GET or HEAD request to the primary if it’s within the delay window. By default the delay is set to 2 seconds. You should change this based on your database infrastructure. Rails doesn’t guarantee “read a recent write” for other users within the delay window and will send GET and HEAD requests to the replicas unless they wrote recently.</p>
+</blockquote>
+<h3 id="Trade-offs-of-Read-Replicas"><a href="#Trade-offs-of-Read-Replicas" class="headerlink" title="Trade-offs of Read Replicas"></a>Trade-offs of Read Replicas</h3><h4 id="Strengths-1"><a href="#Strengths-1" class="headerlink" title="Strengths"></a>Strengths</h4><p>For applications with a high read-to-write ratio:</p>
+<ul>
+<li>the load on the primary database can be dramatically reduced.</li>
+<li>read replicas can be horizontally scaled (even with a load balancer)</li>
+</ul>
+<h4 id="Weaknesses-1"><a href="#Weaknesses-1" class="headerlink" title="Weaknesses"></a>Weaknesses</h4><p>Application developer needs to think about reads that affect writes vs. reads that do not affect writes as such dependent reads should occur in the same transaction as the write.</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a target="_blank" rel="noopener" href="https://yethyuan.github.io/">Ye Yuan</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://blog.yeyuan.pro/posts/2022/cs291a-rdbms-scaling-ii.html">https://blog.yeyuan.pro/posts/2022/cs291a-rdbms-scaling-ii.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/EN/">EN</a><a class="post-meta__tags" href="/tags/UCSB/">UCSB</a><a class="post-meta__tags" href="/tags/CS291A/">CS291A</a><a class="post-meta__tags" href="/tags/Database/">Database</a></div><div class="post_share"><div class="social-share" data-image="https://picsum.photos/1920/1080?blur=2&amp;random=9" data-sites="facebook,twitter,wechat,weibo,qq,google"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/posts/2022/cs291a-rdbms-scaling-i.html"><img class="next-cover" src="https://picsum.photos/1920/1080?blur=2&amp;random=5" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">Relational Database Management System (RDBMS) Scaling - I</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>Related Articles</span></div><div class="relatedPosts-list"><div><a href="/posts/2022/cs291a-rdbms-scaling-i.html" title="Relational Database Management System (RDBMS) Scaling - I"><img class="cover" src="https://picsum.photos/1920/1080?blur=2&random=5" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-11-14</div><div class="title">Relational Database Management System (RDBMS) Scaling - I</div></div></a></div><div><a href="/posts/2022/cs291a-relational-databases-i.html" title="Relational Databases - I"><img class="cover" src="https://picsum.photos/1920/1080?blur=2&random=7" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-11-13</div><div class="title">Relational Databases - I</div></div></a></div><div><a href="/posts/2022/cs291a-relational-databases-ii.html" title="Relational Databases - II"><img class="cover" src="https://picsum.photos/1920/1080?blur=2&random=3" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-11-13</div><div class="title">Relational Databases - II</div></div></a></div><div><a href="/posts/2022/cs291a-concurrency-control-in-rails.html" title="Concurrency Control in Rails"><img class="cover" src="https://picsum.photos/1920/1080?blur=2&random=9" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-11-13</div><div class="title">Concurrency Control in Rails</div></div></a></div><div><a href="/posts/2020/hello-world.html" title="Instructions to Use Hexo"><img class="cover" src="https://picsum.photos/1920/1080?blur=2&random=6" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-10-19</div><div class="title">Instructions to Use Hexo</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> Comment</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Ye Yuan</div><div class="author-info__description">A record of learnings in CS</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">10</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">12</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/YEthYuan"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="/" target="_blank" title="Home"><i class="fa-solid fa-house-chimney"></i></a><a class="social-icon" href="https://yeyuan.pro/" target="_blank" title="About me"><i class="fa-solid fa-user"></i></a><a class="social-icon" href="mailto:maxwell.yuanyeh@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="https://scholar.google.com/citations?hl=en&amp;user=HjmRtpQAAAAJ" target="_blank" title="Google Scholar"><i class="fa-solid fa-graduation-cap"></i></a><a class="social-icon" href="https://www.linkedin.com/in/yethyuan" target="_blank" title="LinkedIn"><i class="fa-brands fa-linkedin"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">I'm actively looking for Summer 2023 Software Development Engineer Intern opportunities! Feel free to contact me at hire@yeyuan.pro</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Service-Oriented-Architecture-SOA-and-Microservices"><span class="toc-number">1.</span> <span class="toc-text">Service Oriented Architecture (SOA) and Microservices</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Service-Oriented-Architecture"><span class="toc-number">1.1.</span> <span class="toc-text">Service Oriented Architecture</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Stack"><span class="toc-number">1.1.1.</span> <span class="toc-text">Stack</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Functions"><span class="toc-number">1.1.2.</span> <span class="toc-text">Functions</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Communications"><span class="toc-number">1.1.3.</span> <span class="toc-text">Communications</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Benefits"><span class="toc-number">1.1.4.</span> <span class="toc-text">Benefits</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SOA-the-Demo-App"><span class="toc-number">1.1.5.</span> <span class="toc-text">SOA the Demo App</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Designs"><span class="toc-number">1.1.5.1.</span> <span class="toc-text">Designs</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Code"><span class="toc-number">1.1.5.2.</span> <span class="toc-text">Code</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SOA-Implementation"><span class="toc-number">1.1.6.</span> <span class="toc-text">SOA Implementation</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Why-JSON-REST-HTTP"><span class="toc-number">1.1.6.1.</span> <span class="toc-text">Why JSON&#x2F;REST&#x2F;HTTP?</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Alternatives-to-JSON-HTTP-Rest"><span class="toc-number">1.1.6.2.</span> <span class="toc-text">Alternatives to JSON&#x2F;HTTP&#x2F;Rest</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Encoding-Data"><span class="toc-number">1.1.6.3.</span> <span class="toc-text">Encoding Data</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Modes-of-Dataflow"><span class="toc-number">1.1.6.4.</span> <span class="toc-text">Modes of Dataflow</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SOA-Trade-offs"><span class="toc-number">1.1.7.</span> <span class="toc-text">SOA Trade-offs</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Strengths"><span class="toc-number">1.1.7.1.</span> <span class="toc-text">Strengths</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Weaknesses"><span class="toc-number">1.1.7.2.</span> <span class="toc-text">Weaknesses</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Separating-Reads-from-Writes"><span class="toc-number">2.</span> <span class="toc-text">Separating Reads from Writes</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Database-Operations"><span class="toc-number">2.1.</span> <span class="toc-text">Database Operations</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Database-Horizontal-Scaling"><span class="toc-number">2.2.</span> <span class="toc-text">Database Horizontal Scaling</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Methdology"><span class="toc-number">2.2.1.</span> <span class="toc-text">Methdology</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Replication"><span class="toc-number">2.2.2.</span> <span class="toc-text">Replication</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Occurring-Time"><span class="toc-number">2.2.2.1.</span> <span class="toc-text">Occurring Time</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Synchronous"><span class="toc-number">2.2.2.1.1.</span> <span class="toc-text">Synchronous</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Asynchronous"><span class="toc-number">2.2.2.1.2.</span> <span class="toc-text">Asynchronous</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Replication-Levels"><span class="toc-number">2.2.2.2.</span> <span class="toc-text">Replication Levels</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Statement-level"><span class="toc-number">2.2.2.2.1.</span> <span class="toc-text">Statement-level</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Block-level"><span class="toc-number">2.2.2.2.2.</span> <span class="toc-text">Block-level</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Trade-offs"><span class="toc-number">2.2.2.2.3.</span> <span class="toc-text">Trade-offs</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#PostgreSQL-Replication"><span class="toc-number">2.2.2.3.</span> <span class="toc-text">PostgreSQL Replication</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Demo-App-and-Read-Replicas"><span class="toc-number">2.2.3.</span> <span class="toc-text">Demo App and Read Replicas</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#read-replicas"><span class="toc-number">2.2.3.1.</span> <span class="toc-text">read replicas</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#primary-database"><span class="toc-number">2.2.3.2.</span> <span class="toc-text">primary database</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Rails-Read-Replica-Support"><span class="toc-number">2.2.3.3.</span> <span class="toc-text">Rails Read Replica Support</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Trade-offs-of-Read-Replicas"><span class="toc-number">2.2.4.</span> <span class="toc-text">Trade-offs of Read Replicas</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Strengths-1"><span class="toc-number">2.2.4.1.</span> <span class="toc-text">Strengths</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Weaknesses-1"><span class="toc-number">2.2.4.2.</span> <span class="toc-text">Weaknesses</span></a></li></ol></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/posts/2022/cs291a-rdbms-scaling-ii.html" title="Relational Database Management System (RDBMS) Scaling - II"><img src="https://picsum.photos/1920/1080?blur=2&amp;random=9" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Relational Database Management System (RDBMS) Scaling - II"/></a><div class="content"><a class="title" href="/posts/2022/cs291a-rdbms-scaling-ii.html" title="Relational Database Management System (RDBMS) Scaling - II">Relational Database Management System (RDBMS) Scaling - II</a><time datetime="2022-11-14T19:48:10.000Z" title="Created 2022-11-14 19:48:10">2022-11-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/2022/cs291a-rdbms-scaling-i.html" title="Relational Database Management System (RDBMS) Scaling - I"><img src="https://picsum.photos/1920/1080?blur=2&amp;random=5" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Relational Database Management System (RDBMS) Scaling - I"/></a><div class="content"><a class="title" href="/posts/2022/cs291a-rdbms-scaling-i.html" title="Relational Database Management System (RDBMS) Scaling - I">Relational Database Management System (RDBMS) Scaling - I</a><time datetime="2022-11-14T17:48:10.000Z" title="Created 2022-11-14 17:48:10">2022-11-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/2022/cs291a-concurrency-control-in-rails.html" title="Concurrency Control in Rails"><img src="https://picsum.photos/1920/1080?blur=2&amp;random=9" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Concurrency Control in Rails"/></a><div class="content"><a class="title" href="/posts/2022/cs291a-concurrency-control-in-rails.html" title="Concurrency Control in Rails">Concurrency Control in Rails</a><time datetime="2022-11-13T19:16:34.000Z" title="Created 2022-11-13 19:16:34">2022-11-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/2022/cs291a-relational-databases-ii.html" title="Relational Databases - II"><img src="https://picsum.photos/1920/1080?blur=2&amp;random=3" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Relational Databases - II"/></a><div class="content"><a class="title" href="/posts/2022/cs291a-relational-databases-ii.html" title="Relational Databases - II">Relational Databases - II</a><time datetime="2022-11-13T16:54:43.000Z" title="Created 2022-11-13 16:54:43">2022-11-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/2022/cs291a-relational-databases-i.html" title="Relational Databases - I"><img src="https://picsum.photos/1920/1080?blur=2&amp;random=7" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Relational Databases - I"/></a><div class="content"><a class="title" href="/posts/2022/cs291a-relational-databases-i.html" title="Relational Databases - I">Relational Databases - I</a><time datetime="2022-11-13T16:10:27.000Z" title="Created 2022-11-13 16:10:27">2022-11-13</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('https://picsum.photos/1920/1080?blur=2&amp;random=9')"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By Ye Yuan</div><div class="footer_custom_text">Make the world a better place</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="Scroll To Comments"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (true){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><div class="js-pjax"><script>(() => {
+  const $mermaidWrap = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaidWrap.length) {
+    window.runMermaid = () => {
+      window.loadMermaid = true
+      const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+      Array.from($mermaidWrap).forEach((item, index) => {
+        const mermaidSrc = item.firstElementChild
+        const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+        const mermaidID = 'mermaid-' + index
+        const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+        mermaid.mermaidAPI.render(mermaidID, mermaidDefinition, (svgCode) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svgCode)
+        })
+      })
+    }
+
+    const loadMermaid = () => {
+      window.loadMermaid ? runMermaid() : getScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js').then(runMermaid)
+    }
+
+    window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+  }
+})()</script><script>function loadGiscus () {
+  let nowTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light'
+
+  const config = Object.assign({
+    src: 'https://giscus.app/client.js',
+    'data-repo': 'YEthYuan/blog',
+    'data-repo-id': 'R_kgDOG_mEtg',
+    'data-category-id': 'DIC_kwDOG_mEts4CSaaF',
+    'data-mapping': 'pathname',
+    'data-theme': nowTheme,
+    'data-reactions-enabled': '1',
+    crossorigin: 'anonymous',
+    async: true
+  },null)
+
+  let ele = document.createElement('script')
+  for (let key in config) {
+    ele.setAttribute(key, config[key])
+  }
+  document.getElementById('giscus-wrap').insertAdjacentElement('afterbegin',ele)
+}
+
+function changeGiscusTheme () {
+  const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light'
+
+  function sendMessage(message) {
+    const iframe = document.querySelector('iframe.giscus-frame');
+    if (!iframe) return;
+    iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+  }
+
+  sendMessage({
+    setConfig: {
+      theme: theme
+    }
+  });
+}
+
+if ('Giscus' === 'Giscus' || !true) {
+  if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+  else loadGiscus()
+} else {
+  function loadOtherComment () {
+    loadGiscus()
+  }
+}</script></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="true"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false,"scale":0.5},"react":{"opacityDefault":0.7,"opacityOnHover":0.8},"log":false});</script></body></html>
