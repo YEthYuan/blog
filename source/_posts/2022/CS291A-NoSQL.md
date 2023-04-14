@@ -16,3 +16,24 @@ Relational Databases are great tools for our data layer. Unfortunately, there is
 - Distinguishing Reads from Writes
 - Service Oriented Architectures
 - Sharding
+
+## RDBMS Scaling Limitations
+
+What if these techniques aren't sufficient for our application?
+
+- We are already using read-replicas, and it's not enough.
+
+- We've already broken our application out via SOA, and still have load hotspots.
+
+- There's no good way to shard our application.
+
+When relational databases fail to scale to our needs, we need to turn to non-relational solutions.
+
+# NoSQL
+
+Non-relational databases are often referred to as NoSQL databases. This is an umbrella term for many types of databases:
+
+- Key-value stores
+- Column-oriented data stores
+- Document-oriented stores
+- Graph databases
