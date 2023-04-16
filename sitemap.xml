@@ -47,6 +47,33 @@
   </url>
   
   <url>
+    <loc>https://blog.yeyuan.pro/categories/index.html</loc>
+    
+    <lastmod>2023-04-16</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.yeyuan.pro/link/index.html</loc>
+    
+    <lastmod>2023-04-16</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.yeyuan.pro/tags/index.html</loc>
+    
+    <lastmod>2023-04-16</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://blog.yeyuan.pro/posts/2022/cs291a-concurrency-control-in-rails.html</loc>
     
     <lastmod>2023-04-16</lastmod>
@@ -128,25 +155,7 @@
   </url>
   
   <url>
-    <loc>https://blog.yeyuan.pro/categories/index.html</loc>
-    
-    <lastmod>2023-04-16</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://blog.yeyuan.pro/link/index.html</loc>
-    
-    <lastmod>2023-04-16</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://blog.yeyuan.pro/tags/index.html</loc>
+    <loc>https://blog.yeyuan.pro/posts/2023/fen-bu-shi-shi-wu-cap-bu-ke-neng-san-jiao.html</loc>
     
     <lastmod>2023-04-16</lastmod>
     
